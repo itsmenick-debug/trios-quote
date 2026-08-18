@@ -144,9 +144,9 @@
     <div class="form-group">
       <label>Select Target TRIOS Scanner</label>
       <select id="scannerSelect" onchange="handleScannerChange()">
-        <option value="T6">TRIOS 6 (Standard MSRP: $28,800 | Cost: $20,100)</option>
-        <option value="T5">TRIOS 5 (Standard MSRP: $26,700 | Cost: $18,700)</option>
-        <option value="T3">TRIOS 3 (Standard MSRP: $18,000 | Cost: $12,600)</option>
+        <option value="T6">TRIOS 6 (Item #22003200)</option>
+        <option value="T5">TRIOS 5 (Item #22004025)</option>
+        <option value="T3">TRIOS 3 (Item #22004000)</option>
       </select>
     </div>
 
@@ -298,7 +298,7 @@
 <script>
   document.getElementById('quoteDate').valueAsDate = new Date();
 
-  // Confidential Q3 2026 verified wholesale database
+  // Confidential Q3 2026 verified database
   const DB = {
     scanners: {
       T6: {
@@ -311,7 +311,7 @@
             name: "🎒 Back to School Trade-Up: TRIOS 4 → TRIOS 6 ($6,500 Rebate Check)", 
             code: "40122", 
             promoMSRP: 28800, 
-            cost: 18500, // Correct Wholesale PO Cost for Code 40122
+            cost: 18500, 
             rebate: 6500, 
             actionType: "preapproval",
             preapprovalUrl: "https://l.3shape.com/back-to-school-preapproval",
@@ -321,7 +321,7 @@
             name: "Trade-In: Competitive / TRIOS Scanner ($4,500 Rebate Check)", 
             code: "40122", 
             promoMSRP: 27900, 
-            cost: 18500, // Correct Wholesale PO Cost for Code 40122
+            cost: 18500, 
             rebate: 4500, 
             actionType: "preapproval",
             preapprovalUrl: "https://www.3shape.com/redeem",
@@ -405,7 +405,7 @@
             name: "🎒 Back to School Trade-Up: TRIOS 3 → TRIOS 5 ($5,500 Rebate Check)", 
             code: "40119", 
             promoMSRP: 26700, 
-            cost: 13700, // Correct Wholesale PO Cost for Code 40119
+            cost: 13700, 
             rebate: 5500, 
             actionType: "preapproval",
             preapprovalUrl: "https://l.3shape.com/back-to-school-preapproval",
@@ -415,7 +415,7 @@
             name: "Trade-In: Competitive / TRIOS Scanner ($3,500 Rebate Check)", 
             code: "40119", 
             promoMSRP: 20200, 
-            cost: 13700, // Correct Wholesale PO Cost for Code 40119
+            cost: 13700, 
             rebate: 3500, 
             actionType: "preapproval",
             preapprovalUrl: "https://www.3shape.com/redeem",
@@ -557,10 +557,14 @@
 
     const costCell = (costVal) => showDealer ? `<td class="num dealer-col">${formatMoney(costVal)}</td>` : '';
 
-    // 1. Scanner row
+    // 1. Scanner row (Now includes explicit Item # line)
     tbody += `
       <tr>
-        <td><strong>${scannerData.name}</strong><br><small style="color:var(--text-muted);">${promoData.name}</small></td>
+        <td>
+          <strong>${scannerData.name}</strong><br>
+          <small style="color:var(--text-muted);">Item #${scannerData.item}</small><br>
+          <small style="color:var(--text-muted); font-style:italic;">${promoData.name}</small>
+        </td>
         ${costCell(promoData.cost)}
         <td class="num">${formatMoney(scannerData.listMSRP)}</td>
         <td class="num"><strong>${formatMoney(promoData.promoMSRP)}</strong></td>
