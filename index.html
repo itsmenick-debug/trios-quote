@@ -94,7 +94,6 @@
     .btn-outline { background: white; border: 1px solid var(--gray-border); color: var(--text-dark); }
     .btn-outline:hover { background: var(--gray-bg); }
 
-    /* Print styling */
     @media print {
       body { background: white; padding: 0; }
       .app-container { display: block; }
@@ -145,9 +144,9 @@
     <div class="form-group">
       <label>Select Target TRIOS Scanner</label>
       <select id="scannerSelect" onchange="handleScannerChange()">
-        <option value="T6">TRIOS 6 (Standard MSRP: $28,800)</option>
-        <option value="T5">TRIOS 5 (Standard MSRP: $26,700)</option>
-        <option value="T3">TRIOS 3 (Standard MSRP: $18,000)</option>
+        <option value="T6">TRIOS 6 (Standard MSRP: $28,800 | Cost: $20,100)</option>
+        <option value="T5">TRIOS 5 (Standard MSRP: $26,700 | Cost: $18,700)</option>
+        <option value="T3">TRIOS 3 (Standard MSRP: $18,000 | Cost: $12,600)</option>
       </select>
     </div>
 
@@ -299,7 +298,7 @@
 <script>
   document.getElementById('quoteDate').valueAsDate = new Date();
 
-  // Full database with updated $5,500 and $6,500 BTS trade-up rebate amounts
+  // Confidential Q3 2026 verified wholesale database
   const DB = {
     scanners: {
       T6: {
@@ -311,9 +310,9 @@
           TRADE_UP_T4: { 
             name: "🎒 Back to School Trade-Up: TRIOS 4 → TRIOS 6 ($6,500 Rebate Check)", 
             code: "40122", 
-            promoMSRP: 28800, // Invoiced at standard MSRP
-            cost: 20100, 
-            rebate: 6500, // $4,500 base + $2,000 promo
+            promoMSRP: 28800, 
+            cost: 18500, // Correct Wholesale PO Cost for Code 40122
+            rebate: 6500, 
             actionType: "preapproval",
             preapprovalUrl: "https://l.3shape.com/back-to-school-preapproval",
             instructionsHtml: "Doctor must submit pre-approval at <a href='https://l.3shape.com/back-to-school-preapproval' target='_blank'>https://l.3shape.com/back-to-school-preapproval</a> prior to purchase. Invoiced at standard MSRP ($28,800); a $6,500 rebate check is issued directly to the clinic via 3Shape upon return of the TRIOS 4."
@@ -322,7 +321,7 @@
             name: "Trade-In: Competitive / TRIOS Scanner ($4,500 Rebate Check)", 
             code: "40122", 
             promoMSRP: 27900, 
-            cost: 18500, 
+            cost: 18500, // Correct Wholesale PO Cost for Code 40122
             rebate: 4500, 
             actionType: "preapproval",
             preapprovalUrl: "https://www.3shape.com/redeem",
@@ -343,7 +342,7 @@
             code: "40123", 
             promoMSRP: 24800, 
             cost: 17800, 
-            rebate: 0,
+            rebate: 0, 
             actionType: "none"
           },
           IOCONNECT_AOT: { 
@@ -405,9 +404,9 @@
           TRADE_UP_T3: { 
             name: "🎒 Back to School Trade-Up: TRIOS 3 → TRIOS 5 ($5,500 Rebate Check)", 
             code: "40119", 
-            promoMSRP: 26700, // Invoiced at standard MSRP
-            cost: 18700, 
-            rebate: 5500, // $3,500 base + $2,000 promo
+            promoMSRP: 26700, 
+            cost: 13700, // Correct Wholesale PO Cost for Code 40119
+            rebate: 5500, 
             actionType: "preapproval",
             preapprovalUrl: "https://l.3shape.com/back-to-school-preapproval",
             instructionsHtml: "Doctor must submit pre-approval at <a href='https://l.3shape.com/back-to-school-preapproval' target='_blank'>https://l.3shape.com/back-to-school-preapproval</a> prior to purchase. Invoiced at standard MSRP ($26,700); a $5,500 rebate check is issued directly to the clinic via 3Shape upon return of the TRIOS 3."
@@ -416,7 +415,7 @@
             name: "Trade-In: Competitive / TRIOS Scanner ($3,500 Rebate Check)", 
             code: "40119", 
             promoMSRP: 20200, 
-            cost: 13700, 
+            cost: 13700, // Correct Wholesale PO Cost for Code 40119
             rebate: 3500, 
             actionType: "preapproval",
             preapprovalUrl: "https://www.3shape.com/redeem",
@@ -471,7 +470,7 @@
             code: "40120", 
             promoMSRP: 10550, 
             cost: 6400, 
-            rebate: 0,
+            rebate: 0, 
             actionType: "none"
           }
         }
@@ -724,7 +723,6 @@
     });
   }
 
-  // Initialize
   handleScannerChange();
 </script>
 
