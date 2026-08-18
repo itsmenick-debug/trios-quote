@@ -79,7 +79,7 @@
     .dealer-data-grid div span { color: var(--text-muted); display: block; }
     .dealer-data-grid div strong { color: var(--text-dark); font-size: 0.88rem; }
 
-    /* Trade-In Pre-Approval Box */
+    /* Action Requirement Box */
     .trade-instructions { background: #fffaf0; border: 1.5px solid #ecc94b; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.82rem; color: #744210; }
     .trade-instructions a { color: #b7791f; font-weight: 700; text-decoration: underline; }
 
@@ -184,7 +184,7 @@
 
     <div class="section-title">5. Internal Cost & Margin Mode</div>
     <div class="switch-container">
-      <span class="switch-label">📊 Show Dealer Costs, PO Codes & Profit</span>
+      <span class="switch-label">📊 Show Dealer Costs, PO Codes & Margins</span>
       <label class="toggle-switch">
         <input type="checkbox" id="showDealerMargins" checked onchange="updateQuote()">
         <span class="slider"></span>
@@ -233,9 +233,9 @@
       </div>
     </div>
 
-    <!-- Trade-In Pre-Approval Requirement Box -->
+    <!-- Interactive Requirement & Link Box -->
     <div class="trade-instructions" id="tradeBox" style="display: none;">
-      <strong style="display: flex; align-items: center; gap: 4px;">🔄 Trade Pre-Approval Required:</strong>
+      <strong id="actionBoxTitle">🔄 Requirement & Portal Link:</strong>
       <div id="tradeInstructionsText" style="margin-top: 4px; line-height: 1.4;"></div>
     </div>
 
@@ -283,7 +283,7 @@
       <strong>Included with this configuration:</strong>
       <ul>
         <li><strong>FREE 2-Hour TRIOS Masterclass:</strong> Personalized virtual training ($500 value, Code: <code>TRIOSQ3FREE</code>).</li>
-        <li><strong>$1,000 3Shape Lab Credit:</strong> Applied directly to lab account via <code>3shape.com/labcredit</code>.</li>
+        <li><strong>$1,000 3Shape Lab Credit:</strong> Applied directly to lab account via <a href="https://www.3shape.com/labcredit" target="_blank" style="color:var(--green); font-weight:600;">3shape.com/labcredit</a>.</li>
         <li><strong>1st Year TRIOS Care Included:</strong> Comprehensive warranty & support with option to switch to free TRIOS Only plan after Year 1.</li>
       </ul>
     </div>
@@ -299,7 +299,7 @@
 <script>
   document.getElementById('quoteDate').valueAsDate = new Date();
 
-  // Full database with revised trade-up logic (No upfront discount, full savings via rebate check)
+  // Full database with precise URLs and updated trade structures
   const DB = {
     scanners: {
       T6: {
@@ -311,12 +311,12 @@
           TRADE_UP_T4: { 
             name: "🎒 Back to School Trade-Up: TRIOS 4 → TRIOS 6 ($5,400 Rebate Check)", 
             code: "40122", 
-            promoMSRP: 28800, // Invoiced at full MSRP; no upfront discount
+            promoMSRP: 28800, // Invoiced at full MSRP (no upfront discount)
             cost: 20100, 
-            rebate: 5400, // Full savings provided via rebate check
-            isTrade: true,
+            rebate: 5400, // Full savings via rebate check
+            actionType: "preapproval",
             preapprovalUrl: "https://l.3shape.com/back-to-school-preapproval",
-            tradeDesc: "Doctor must submit pre-approval at <a href='https://l.3shape.com/back-to-school-preapproval' target='_blank'>l.3shape.com/back-to-school-preapproval</a> prior to purchase. Invoiced at full MSRP ($28,800) with no upfront discount; the full $5,400 savings is issued directly to the clinic via a 3Shape rebate check upon return of the TRIOS 4."
+            instructionsHtml: "Doctor must submit pre-approval at <a href='https://l.3shape.com/back-to-school-preapproval' target='_blank'>https://l.3shape.com/back-to-school-preapproval</a> prior to purchase. Invoiced at full MSRP ($28,800); the full $5,400 savings is issued directly to the clinic via a 3Shape rebate check upon return of the TRIOS 4."
           },
           TRADE_IN_COMPETITIVE: { 
             name: "Trade-In: Competitive / TRIOS Scanner ($4,500 Rebate Check)", 
@@ -324,9 +324,9 @@
             promoMSRP: 27900, 
             cost: 18500, 
             rebate: 4500, 
-            isTrade: true,
+            actionType: "preapproval",
             preapprovalUrl: "https://www.3shape.com/redeem",
-            tradeDesc: "Doctor must submit pre-approval at <a href='https://www.3shape.com/redeem' target='_blank'>3shape.com/redeem</a> prior to purchase. $4,500 rebate check is issued directly to the end user upon receipt of eligible trade scanner to 3Shape."
+            instructionsHtml: "Doctor must submit pre-approval at <a href='https://www.3shape.com/redeem' target='_blank'>3shape.com/redeem</a> prior to purchase. $4,500 rebate check is issued directly to the end user upon receipt of eligible trade scanner to 3Shape."
           },
           STANDARD_REBATE: { 
             name: "Standard Promotion ($1,500 Rebate Check)", 
@@ -334,7 +334,9 @@
             promoMSRP: 27900, 
             cost: 18500, 
             rebate: 1500,
-            isTrade: false
+            actionType: "rebate",
+            preapprovalUrl: "https://l.3shape.com/26Q3",
+            instructionsHtml: "End-user must submit proof of purchase at <a href='https://l.3shape.com/26Q3' target='_blank'>l.3shape.com/26Q3</a> within 30 days of invoice to claim the $1,500 rebate check."
           },
           ADDITIONAL: { 
             name: "Additional Scanner Promo (TRIOS/iTero/Primescan Users)", 
@@ -342,7 +344,7 @@
             promoMSRP: 24800, 
             cost: 17800, 
             rebate: 0,
-            isTrade: false
+            actionType: "none"
           },
           IOCONNECT_AOT: { 
             name: "TruAbutment ioConnect AOT Kit Bundle ($1,500 Rebate)", 
@@ -353,7 +355,9 @@
             kitName: "TruAbutment ioConnect AOT Implant Kit",
             kitPrice: 3000,
             kitCost: 0,
-            isTrade: false
+            actionType: "rebate",
+            preapprovalUrl: "https://l.3shape.com/26Q3",
+            instructionsHtml: "Claim the $1,500 bundle rebate at <a href='https://l.3shape.com/26Q3' target='_blank'>l.3shape.com/26Q3</a> within 30 days of invoice."
           },
           IOCONNECT_STRAUMANN: { 
             name: "TruAbutment ioConnect Straumann Kit Bundle ($1,500 Rebate)", 
@@ -364,7 +368,9 @@
             kitName: "TruAbutment ioConnect Straumann Implant Kit",
             kitPrice: 4000,
             kitCost: 0,
-            isTrade: false
+            actionType: "rebate",
+            preapprovalUrl: "https://l.3shape.com/26Q3",
+            instructionsHtml: "Claim the $1,500 bundle rebate at <a href='https://l.3shape.com/26Q3' target='_blank'>l.3shape.com/26Q3</a> within 30 days of invoice."
           },
           IOCONNECT_ADDL_AOT: { 
             name: "TruAbutment ioConnect Additional Scanner - AOT Kit", 
@@ -375,7 +381,7 @@
             kitName: "TruAbutment ioConnect AOT Implant Kit",
             kitPrice: 3000,
             kitCost: 0,
-            isTrade: false
+            actionType: "none"
           },
           IOCONNECT_ADDL_STRAUMANN: { 
             name: "TruAbutment ioConnect Additional Scanner - Straumann Kit", 
@@ -386,7 +392,7 @@
             kitName: "TruAbutment ioConnect Straumann Implant Kit",
             kitPrice: 4000,
             kitCost: 0,
-            isTrade: false
+            actionType: "none"
           }
         }
       },
@@ -399,12 +405,12 @@
           TRADE_UP_T3: { 
             name: "🎒 Back to School Trade-Up: TRIOS 3 → TRIOS 5 ($10,000 Rebate Check)", 
             code: "40119", 
-            promoMSRP: 26700, // Invoiced at full MSRP; no upfront discount
+            promoMSRP: 26700, // Invoiced at full MSRP (no upfront discount)
             cost: 18700, 
-            rebate: 10000, // Full savings provided via rebate check ($6,500 promo + $3,500 trade)
-            isTrade: true,
+            rebate: 10000, // Full savings via rebate check
+            actionType: "preapproval",
             preapprovalUrl: "https://l.3shape.com/back-to-school-preapproval",
-            tradeDesc: "Doctor must submit pre-approval at <a href='https://l.3shape.com/back-to-school-preapproval' target='_blank'>l.3shape.com/back-to-school-preapproval</a> prior to purchase. Invoiced at full MSRP ($26,700) with no upfront discount; the full $10,000 savings is issued directly to the clinic via a 3Shape rebate check upon return of the TRIOS 3."
+            instructionsHtml: "Doctor must submit pre-approval at <a href='https://l.3shape.com/back-to-school-preapproval' target='_blank'>https://l.3shape.com/back-to-school-preapproval</a> prior to purchase. Invoiced at full MSRP ($26,700); the full $10,000 savings is issued directly to the clinic via a 3Shape rebate check upon return of the TRIOS 3."
           },
           TRADE_IN_COMPETITIVE: { 
             name: "Trade-In: Competitive / TRIOS Scanner ($3,500 Rebate Check)", 
@@ -412,17 +418,19 @@
             promoMSRP: 20200, 
             cost: 13700, 
             rebate: 3500, 
-            isTrade: true,
+            actionType: "preapproval",
             preapprovalUrl: "https://www.3shape.com/redeem",
-            tradeDesc: "Doctor must submit pre-approval at <a href='https://www.3shape.com/redeem' target='_blank'>3shape.com/redeem</a> prior to purchase. $3,500 rebate check is issued directly to the end user upon receipt of eligible trade scanner to 3Shape."
+            instructionsHtml: "Doctor must submit pre-approval at <a href='https://www.3shape.com/redeem' target='_blank'>3shape.com/redeem</a> prior to purchase. $3,500 rebate check is issued directly to the end user upon receipt of eligible trade scanner to 3Shape."
           },
           STANDARD_REBATE: { 
             name: "Grow with TRIOS 5 ($1,000 Rebate Check + $6,500 Upfront Off)", 
             code: "40119", 
             promoMSRP: 20200, 
             cost: 13700, 
-            rebate: 1000,
-            isTrade: false
+            rebate: 1000, 
+            actionType: "rebate",
+            preapprovalUrl: "https://l.3shape.com/26Q3",
+            instructionsHtml: "End-user must submit proof of purchase at <a href='https://l.3shape.com/26Q3' target='_blank'>l.3shape.com/26Q3</a> within 30 days of invoice to claim the $1,000 rebate check."
           },
           IOCONNECT_AOT: { 
             name: "TruAbutment ioConnect AOT Kit Bundle ($1,000 Rebate)", 
@@ -433,7 +441,9 @@
             kitName: "TruAbutment ioConnect AOT Implant Kit",
             kitPrice: 3000,
             kitCost: 0,
-            isTrade: false
+            actionType: "rebate",
+            preapprovalUrl: "https://l.3shape.com/26Q3",
+            instructionsHtml: "Claim the $1,000 bundle rebate at <a href='https://l.3shape.com/26Q3' target='_blank'>l.3shape.com/26Q3</a> within 30 days of invoice."
           },
           IOCONNECT_STRAUMANN: { 
             name: "TruAbutment ioConnect Straumann Kit Bundle ($1,000 Rebate)", 
@@ -444,7 +454,9 @@
             kitName: "TruAbutment ioConnect Straumann Implant Kit",
             kitPrice: 4000,
             kitCost: 0,
-            isTrade: false
+            actionType: "rebate",
+            preapprovalUrl: "https://l.3shape.com/26Q3",
+            instructionsHtml: "Claim the $1,000 bundle rebate at <a href='https://l.3shape.com/26Q3' target='_blank'>l.3shape.com/26Q3</a> within 30 days of invoice."
           }
         }
       },
@@ -460,7 +472,7 @@
             promoMSRP: 10550, 
             cost: 6400, 
             rebate: 0,
-            isTrade: false
+            actionType: "none"
           }
         }
       }
@@ -522,11 +534,16 @@
     document.getElementById('outPromoCode').textContent = `PO PROMO CODE: ${promoData.code}`;
     document.getElementById('outPoCodeBadge').textContent = promoData.code;
 
-    // Trade Instructions Box & URL
+    // Requirement & Portal Instructions Box
     const tradeBox = document.getElementById('tradeBox');
-    if (promoData.isTrade) {
+    if (promoData.actionType === 'preapproval') {
       tradeBox.style.display = 'block';
-      document.getElementById('tradeInstructionsText').innerHTML = promoData.tradeDesc;
+      document.getElementById('actionBoxTitle').innerHTML = '⚠️ Pre-Approval Required Prior to Purchase:';
+      document.getElementById('tradeInstructionsText').innerHTML = promoData.instructionsHtml;
+    } else if (promoData.actionType === 'rebate') {
+      tradeBox.style.display = 'block';
+      document.getElementById('actionBoxTitle').innerHTML = '📬 Rebate Redemption Link:';
+      document.getElementById('tradeInstructionsText').innerHTML = promoData.instructionsHtml;
     } else {
       tradeBox.style.display = 'none';
     }
@@ -682,9 +699,12 @@
     if (rebate) text += `• Mail-In Rebate Check: ${rebate}\n`;
     text += `• Doctor Net Investment: ${net}\n`;
 
-    if (promo.isTrade) {
-      text += `\n⚠️ Pre-Approval Required Prior to Order:\n`;
-      text += `Pre-Approval Link: ${promo.preapprovalUrl}\n`;
+    if (promo.actionType === 'preapproval') {
+      text += `\n⚠️ Pre-Approval Required Prior to Order Submission:\n`;
+      text += `Submit Pre-Approval Here: ${promo.preapprovalUrl}\n`;
+    } else if (promo.actionType === 'rebate') {
+      text += `\n📬 Rebate Claim Portal (within 30 days of invoice):\n`;
+      text += `Claim Here: ${promo.preapprovalUrl}\n`;
     }
 
     if (showDealer) {
@@ -695,7 +715,7 @@
 
     text += `\nIncluded Perks:\n`;
     text += `+ Free 2-Hour TRIOS Masterclass Onboarding ($500 Value, Code: TRIOSQ3FREE)\n`;
-    text += `+ $1,000 3Shape Lab Credit voucher (claim at 3shape.com/labcredit)\n`;
+    text += `+ $1,000 3Shape Lab Credit voucher (claim at https://www.3shape.com/labcredit)\n`;
     text += `+ 1 Year TRIOS Care Warranty & Support\n`;
     text += `\nOffer valid through September 30, 2026.`;
 
