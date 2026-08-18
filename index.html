@@ -70,7 +70,7 @@
     .total-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 0.88rem; }
     .total-row.grand { font-size: 1.1rem; font-weight: 800; color: var(--primary); border-top: 2px solid var(--gray-border); padding-top: 8px; margin-top: 6px; }
     .total-row.rebate-row { color: var(--green); font-weight: 700; }
-    .total-row.discount-row { color: #c53030; font-weight: 600; font-size: 0.85rem; }
+    .total-row.savings { color: #c53030; font-weight: 600; font-size: 0.85rem; }
 
     /* Internal Dealer Margin Box */
     .dealer-margins-box { background: var(--dealer-bg); border: 1.5px dashed var(--dealer-blue); border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.85rem; }
@@ -144,9 +144,9 @@
     <div class="form-group">
       <label>Select Target TRIOS Scanner</label>
       <select id="scannerSelect" onchange="handleScannerChange()">
-        <option value="T6">TRIOS 6 (Item #22003200)</option>
-        <option value="T5">TRIOS 5 (Item #22004025)</option>
-        <option value="T3">TRIOS 3 (Item #22004000)</option>
+        <option value="T6">TRIOS 6 (Item #22003200 | Standard MSRP: $28,800)</option>
+        <option value="T5">TRIOS 5 (Item #22004025 | Standard MSRP: $26,700)</option>
+        <option value="T3">TRIOS 3 (Item #22004000 | Standard MSRP: $18,000)</option>
       </select>
     </div>
 
@@ -161,10 +161,10 @@
     <div class="form-group">
       <label>Hardware Configuration</label>
       <select id="pcSelect" onchange="updateQuote()">
-        <option value="DELL_PRO">Dell Pro Max Plus w/ 3-Yr Support (Promo Retail: $4,350 | Cost: $4,050)</option>
-        <option value="HP_ZBOOK">HP ZBook G11 w/ 3-Yr Warranty (Promo Retail: $1,850 | Cost: $1,700)</option>
-        <option value="MOVE_PLUS">TRIOS MOVE+ Standalone Cart (Promo Retail: $7,200 | Cost: $6,100)</option>
-        <option value="MOVE_PRO">TRIOS MOVE Pro Standalone Cart (Promo Retail: $8,000 | Cost: $6,800)</option>
+        <option value="DELL_PRO">Dell Pro Max Plus w/ 3-Yr Support (MSRP: $4,350 | Cost: $4,050)</option>
+        <option value="HP_ZBOOK">HP ZBook G11 w/ 3-Yr Warranty (MSRP: $1,850 | Cost: $1,700)</option>
+        <option value="MOVE_PLUS">TRIOS MOVE+ Standalone Cart (MSRP: $7,200 | Cost: $6,100)</option>
+        <option value="MOVE_PRO">TRIOS MOVE Pro Standalone Cart (MSRP: $8,000 | Cost: $6,800)</option>
         <option value="NONE">No PC / Existing Approved Hardware ($0)</option>
       </select>
     </div>
@@ -172,7 +172,7 @@
     <div class="section-title">4. Consumables & Margin Adjustment</div>
     <div class="grid-2">
       <div class="form-group">
-        <label>Ready Tips Boxes ($50 promo retail | $34 cost)</label>
+        <label>Ready Tips Boxes ($50 promo retail | $75 standard)</label>
         <input type="number" id="readyTipsQty" min="0" value="0" oninput="updateQuote()">
       </div>
       <div class="form-group">
@@ -238,12 +238,13 @@
       <div id="tradeInstructionsText" style="margin-top: 4px; line-height: 1.4;"></div>
     </div>
 
-    <!-- Pricing Table -->
+    <!-- Pricing Table with Normal MSRP and Promo Retail columns -->
     <table class="pricing-table">
       <thead>
         <tr>
           <th>Item Description</th>
           <th class="num dealer-col">Dealer Cost</th>
+          <th class="num">Standard MSRP</th>
           <th class="num">Promotional Retail</th>
         </tr>
       </thead>
@@ -255,12 +256,12 @@
     <!-- Totals Area -->
     <div class="totals-area">
       <div class="total-row">
-        <span>Subtotal (Promotional Retail):</span>
-        <span id="outSubtotal" class="num">$0</span>
+        <span>Total Standard MSRP:</span>
+        <span id="outStandardSubtotal" class="num">$0</span>
       </div>
-      <div class="total-row discount-row" id="dealerDiscountRow" style="display: none;">
-        <span>Dealer Custom Credit / Discount:</span>
-        <span id="outDealerDiscount" class="num">-$0</span>
+      <div class="total-row savings" id="upfrontDiscountRow">
+        <span>Upfront Promotional Savings:</span>
+        <span id="outUpfrontSavings" class="num">-$0</span>
       </div>
       <div class="total-row grand">
         <span>Invoice Purchase Price:</span>
@@ -297,17 +298,18 @@
 <script>
   document.getElementById('quoteDate').valueAsDate = new Date();
 
-  // Confidential Q3 2026 verified database with exact Promotional MSRPs
+  // Confidential Q3 2026 verified database
   const DB = {
     scanners: {
       T6: {
         name: "TRIOS 6 Intraoral Scanner",
         item: "22003200",
+        standardMSRP: 28800,
         promos: {
           TRADE_UP_T4: { 
             name: "🎒 Back to School Trade-Up: TRIOS 4 → TRIOS 6 ($6,500 Rebate Check)", 
             code: "40122", 
-            promoMSRP: 27900, // Exact Q3 Promotional MSRP
+            promoMSRP: 27900, 
             cost: 18500, 
             rebate: 6500, 
             actionType: "preapproval",
@@ -317,7 +319,7 @@
           TRADE_IN_COMPETITIVE: { 
             name: "Trade-In: Competitive / TRIOS Scanner ($4,500 Rebate Check)", 
             code: "40122", 
-            promoMSRP: 27900, // Exact Q3 Promotional MSRP
+            promoMSRP: 27900, 
             cost: 18500, 
             rebate: 4500, 
             actionType: "preapproval",
@@ -327,7 +329,7 @@
           STANDARD_REBATE: { 
             name: "Standard Promotion ($1,500 Rebate Check)", 
             code: "40122", 
-            promoMSRP: 27900, // Exact Q3 Promotional MSRP
+            promoMSRP: 27900, 
             cost: 18500, 
             rebate: 1500, 
             actionType: "rebate",
@@ -337,7 +339,7 @@
           ADDITIONAL: { 
             name: "Additional Scanner Promo (TRIOS/iTero/Primescan Users)", 
             code: "40123", 
-            promoMSRP: 24800, // Exact Q3 Promotional MSRP
+            promoMSRP: 24800, 
             cost: 17800, 
             rebate: 0, 
             actionType: "none"
@@ -347,8 +349,9 @@
             code: "40153", 
             promoMSRP: 26900, 
             cost: 17500, 
-            rebate: 1500,
+            rebate: 1500, 
             kitName: "TruAbutment ioConnect AOT Implant Kit",
+            kitStandardMSRP: 3000,
             kitPrice: 3000,
             kitCost: 0,
             actionType: "rebate",
@@ -360,8 +363,9 @@
             code: "40153", 
             promoMSRP: 26900, 
             cost: 17500, 
-            rebate: 1500,
+            rebate: 1500, 
             kitName: "TruAbutment ioConnect Straumann Implant Kit",
+            kitStandardMSRP: 4000,
             kitPrice: 4000,
             kitCost: 0,
             actionType: "rebate",
@@ -373,8 +377,9 @@
             code: "40155", 
             promoMSRP: 23800, 
             cost: 16800, 
-            rebate: 0,
+            rebate: 0, 
             kitName: "TruAbutment ioConnect AOT Implant Kit",
+            kitStandardMSRP: 3000,
             kitPrice: 3000,
             kitCost: 0,
             actionType: "none"
@@ -384,7 +389,7 @@
             code: "40155", 
             promoMSRP: 23800, 
             cost: 16800, 
-            rebate: 0,
+            rebate: 0, 
             kitName: "TruAbutment ioConnect Straumann Implant Kit",
             kitPrice: 4000,
             kitCost: 0,
@@ -395,11 +400,12 @@
       T5: {
         name: "TRIOS 5 Intraoral Scanner",
         item: "22004025",
+        standardMSRP: 26700,
         promos: {
           TRADE_UP_T3: { 
             name: "🎒 Back to School Trade-Up: TRIOS 3 → TRIOS 5 ($5,500 Rebate Check)", 
             code: "40119", 
-            promoMSRP: 20200, // Exact Q3 Promotional MSRP
+            promoMSRP: 20200, 
             cost: 13700, 
             rebate: 5500, 
             actionType: "preapproval",
@@ -409,7 +415,7 @@
           TRADE_IN_COMPETITIVE: { 
             name: "Trade-In: Competitive / TRIOS Scanner ($3,500 Rebate Check)", 
             code: "40119", 
-            promoMSRP: 20200, // Exact Q3 Promotional MSRP
+            promoMSRP: 20200, 
             cost: 13700, 
             rebate: 3500, 
             actionType: "preapproval",
@@ -419,7 +425,7 @@
           STANDARD_REBATE: { 
             name: "Grow with TRIOS 5 ($1,000 Rebate Check)", 
             code: "40119", 
-            promoMSRP: 20200, // Exact Q3 Promotional MSRP
+            promoMSRP: 20200, 
             cost: 13700, 
             rebate: 1000, 
             actionType: "rebate",
@@ -433,6 +439,7 @@
             cost: 12700, 
             rebate: 1000, 
             kitName: "TruAbutment ioConnect AOT Implant Kit",
+            kitStandardMSRP: 3000,
             kitPrice: 3000,
             kitCost: 0,
             actionType: "rebate",
@@ -446,6 +453,7 @@
             cost: 12700, 
             rebate: 1000, 
             kitName: "TruAbutment ioConnect Straumann Implant Kit",
+            kitStandardMSRP: 4000,
             kitPrice: 4000,
             kitCost: 0,
             actionType: "rebate",
@@ -457,11 +465,12 @@
       T3: {
         name: "TRIOS 3 Intraoral Scanner",
         item: "22004000",
+        standardMSRP: 18000,
         promos: {
           VALUE_PROMO: { 
             name: "Value Promotion", 
             code: "40120", 
-            promoMSRP: 10550, // Exact Q3 Promotional MSRP
+            promoMSRP: 10550, 
             cost: 6400, 
             rebate: 0, 
             actionType: "none"
@@ -470,15 +479,16 @@
       }
     },
     pc: {
-      DELL_PRO: { name: 'Dell Pro Max Plus (3-Yr Support)', item: '20000255', promoMSRP: 4350, cost: 4050 },
-      HP_ZBOOK: { name: 'HP ZBook G11 Laptop (3-Yr Warranty)', item: '20000250', promoMSRP: 1850, cost: 1700 },
-      MOVE_PLUS: { name: 'TRIOS MOVE+ Standalone Cart', item: '22002375', promoMSRP: 7200, cost: 6100 },
-      MOVE_PRO: { name: 'TRIOS MOVE Pro Standalone Cart', item: '22003210', promoMSRP: 8000, cost: 6800 },
-      NONE: { name: 'No PC / Existing Approved Hardware', item: '-', promoMSRP: 0, cost: 0 }
+      DELL_PRO: { name: 'Dell Pro Max Plus (3-Yr Support)', item: '20000255', standardMSRP: 4350, promoMSRP: 4350, cost: 4050 },
+      HP_ZBOOK: { name: 'HP ZBook G11 Laptop (3-Yr Warranty)', item: '20000250', standardMSRP: 1850, promoMSRP: 1850, cost: 1700 },
+      MOVE_PLUS: { name: 'TRIOS MOVE+ Standalone Cart', item: '22002375', standardMSRP: 7200, promoMSRP: 7200, cost: 6100 },
+      MOVE_PRO: { name: 'TRIOS MOVE Pro Standalone Cart', item: '22003210', standardMSRP: 8000, promoMSRP: 8000, cost: 6800 },
+      NONE: { name: 'No PC / Existing Approved Hardware', item: '-', standardMSRP: 0, promoMSRP: 0, cost: 0 }
     },
     readyTips: {
       item: '10036057',
       promoCode: '40113',
+      standardMSRP: 75,
       promoMSRP: 50,
       cost: 34
     }
@@ -539,16 +549,17 @@
       tradeBox.style.display = 'none';
     }
 
-    // Calculations based purely on Promotional Retail
+    // Calculations for both Standard MSRP and Promotional Retail
     let tbody = '';
-    let subtotalPromoRetail = promoData.promoMSRP + pcData.promoMSRP;
+    let totalStandardList = scannerData.standardMSRP + pcData.standardMSRP;
+    let totalPromoRetail = promoData.promoMSRP + pcData.promoMSRP;
     let totalCost = promoData.cost + pcData.cost;
     let itemCodesList = [scannerData.item];
     if (pcData.item !== '-') itemCodesList.push(pcData.item);
 
     const costCell = (costVal) => showDealer ? `<td class="num dealer-col">${formatMoney(costVal)}</td>` : '';
 
-    // 1. Scanner row
+    // 1. Scanner row (Displays Item #, Standard MSRP and Promo Retail)
     tbody += `
       <tr>
         <td>
@@ -557,6 +568,7 @@
           <small style="color:var(--text-muted); font-style:italic;">${promoData.name}</small>
         </td>
         ${costCell(promoData.cost)}
+        <td class="num">${formatMoney(scannerData.standardMSRP)}</td>
         <td class="num"><strong>${formatMoney(promoData.promoMSRP)}</strong></td>
       </tr>
     `;
@@ -570,6 +582,7 @@
             <small style="color:var(--text-muted);">Item #${pcData.item}</small>
           </td>
           ${costCell(pcData.cost)}
+          <td class="num">${formatMoney(pcData.standardMSRP)}</td>
           <td class="num"><strong>${formatMoney(pcData.promoMSRP)}</strong></td>
         </tr>
       `;
@@ -577,7 +590,8 @@
 
     // 3. TruAbutment ioConnect Kit
     if (promoData.kitName) {
-      subtotalPromoRetail += promoData.kitPrice;
+      totalStandardList += (promoData.kitStandardMSRP || promoData.kitPrice);
+      totalPromoRetail += promoData.kitPrice;
       tbody += `
         <tr>
           <td>
@@ -585,6 +599,7 @@
             <small style="color:var(--text-muted);">Workflow Bundle Component</small>
           </td>
           ${costCell(promoData.kitCost || 0)}
+          <td class="num">${formatMoney(promoData.kitStandardMSRP || promoData.kitPrice)}</td>
           <td class="num"><strong>${formatMoney(promoData.kitPrice)}</strong></td>
         </tr>
       `;
@@ -592,9 +607,11 @@
 
     // 4. Ready Tips
     if (readyTipsQty > 0) {
+      const tipsList = readyTipsQty * DB.readyTips.standardMSRP;
       const tipsPromo = readyTipsQty * DB.readyTips.promoMSRP;
       const tipsCost = readyTipsQty * DB.readyTips.cost;
-      subtotalPromoRetail += tipsPromo;
+      totalStandardList += tipsList;
+      totalPromoRetail += tipsPromo;
       totalCost += tipsCost;
       itemCodesList.push(`${DB.readyTips.item} (x${readyTipsQty})`);
 
@@ -605,7 +622,20 @@
             <small style="color:var(--text-muted);">Promo Code 40113 (Item #${DB.readyTips.item})</small>
           </td>
           ${costCell(tipsCost)}
+          <td class="num">${formatMoney(tipsList)}</td>
           <td class="num"><strong>${formatMoney(tipsPromo)}</strong></td>
+        </tr>
+      `;
+    }
+
+    // 5. Custom Adjustment
+    if (customDiscount > 0) {
+      tbody += `
+        <tr>
+          <td><strong style="color: #c53030;">Dealer Additional Adjustment</strong></td>
+          ${showDealer ? `<td class="num dealer-col">-</td>` : ''}
+          <td class="num">-</td>
+          <td class="num" style="color: #c53030;"><strong>-${formatMoney(customDiscount)}</strong></td>
         </tr>
       `;
     }
@@ -617,19 +647,20 @@
     dealerHeaders.forEach(th => th.style.display = showDealer ? 'table-cell' : 'none');
 
     // Totals
-    const invoiceTotal = subtotalPromoRetail - customDiscount;
+    const invoiceTotal = totalPromoRetail - customDiscount;
+    const upfrontSavings = (totalStandardList - invoiceTotal);
     const rebateAmount = promoData.rebate;
     const netInvestment = invoiceTotal - rebateAmount;
 
-    document.getElementById('outSubtotal').textContent = formatMoney(subtotalPromoRetail);
-
-    // Custom Dealer Discount Row
-    const discountRow = document.getElementById('dealerDiscountRow');
-    if (customDiscount > 0) {
-      discountRow.style.display = 'flex';
-      document.getElementById('outDealerDiscount').textContent = `-${formatMoney(customDiscount)}`;
+    document.getElementById('outStandardSubtotal').textContent = formatMoney(totalStandardList);
+    
+    // Upfront Discount Row Handling
+    const upfrontRow = document.getElementById('upfrontDiscountRow');
+    if (upfrontSavings > 0) {
+      upfrontRow.style.display = 'flex';
+      document.getElementById('outUpfrontSavings').textContent = `-${formatMoney(upfrontSavings)}`;
     } else {
-      discountRow.style.display = 'none';
+      upfrontRow.style.display = 'none';
     }
 
     document.getElementById('outInvoiceTotal').textContent = formatMoney(invoiceTotal);
@@ -667,6 +698,7 @@
     const promoKey = document.getElementById('promoSelect').value;
     const scanner = DB.scanners[scannerKey];
     const promo = scanner.promos[promoKey] || Object.values(scanner.promos)[0];
+    const standardSubtotal = document.getElementById('outStandardSubtotal').textContent;
     const invoice = document.getElementById('outInvoiceTotal').textContent;
     const rebate = promo.rebate > 0 ? formatMoney(promo.rebate) : null;
     const net = document.getElementById('outNetPrice').textContent;
@@ -679,6 +711,7 @@
     text += `• 3Shape PO Promo Code: ${promo.code}\n`;
     if (promo.kitName) text += `• Included Kit: ${promo.kitName} (${formatMoney(promo.kitPrice)})\n`;
     text += `• Hardware: ${document.getElementById('pcSelect').selectedOptions[0].text}\n`;
+    text += `• Total Standard MSRP: ${standardSubtotal}\n`;
     text += `• Promotional Invoice Price: ${invoice}\n`;
     if (rebate) text += `• Mail-In Rebate Check: ${rebate}\n`;
     text += `• Doctor Net Investment: ${net}\n`;
