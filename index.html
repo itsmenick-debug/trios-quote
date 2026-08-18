@@ -79,7 +79,7 @@
     .dealer-data-grid div span { color: var(--text-muted); display: block; }
     .dealer-data-grid div strong { color: var(--text-dark); font-size: 0.88rem; }
 
-    /* Action Requirement Box */
+    /* Requirement & Portal Box */
     .trade-instructions { background: #fffaf0; border: 1.5px solid #ecc94b; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.82rem; color: #744210; }
     .trade-instructions a { color: #b7791f; font-weight: 700; text-decoration: underline; }
 
@@ -94,7 +94,7 @@
     .btn-outline { background: white; border: 1px solid var(--gray-border); color: var(--text-dark); }
     .btn-outline:hover { background: var(--gray-bg); }
 
-    /* Print styling: clean customer PDF */
+    /* Print styling */
     @media print {
       body { background: white; padding: 0; }
       .app-container { display: block; }
@@ -233,7 +233,7 @@
       </div>
     </div>
 
-    <!-- Interactive Requirement & Link Box -->
+    <!-- Requirement & Portal Instructions Box -->
     <div class="trade-instructions" id="tradeBox" style="display: none;">
       <strong id="actionBoxTitle">🔄 Requirement & Portal Link:</strong>
       <div id="tradeInstructionsText" style="margin-top: 4px; line-height: 1.4;"></div>
@@ -299,7 +299,7 @@
 <script>
   document.getElementById('quoteDate').valueAsDate = new Date();
 
-  // Full database with precise URLs and updated trade structures
+  // Full database with updated $5,500 and $6,500 BTS trade-up rebate amounts
   const DB = {
     scanners: {
       T6: {
@@ -309,14 +309,14 @@
         standardCost: 20100,
         promos: {
           TRADE_UP_T4: { 
-            name: "🎒 Back to School Trade-Up: TRIOS 4 → TRIOS 6 ($5,400 Rebate Check)", 
+            name: "🎒 Back to School Trade-Up: TRIOS 4 → TRIOS 6 ($6,500 Rebate Check)", 
             code: "40122", 
-            promoMSRP: 28800, // Invoiced at full MSRP (no upfront discount)
+            promoMSRP: 28800, // Invoiced at standard MSRP
             cost: 20100, 
-            rebate: 5400, // Full savings via rebate check
+            rebate: 6500, // $4,500 base + $2,000 promo
             actionType: "preapproval",
             preapprovalUrl: "https://l.3shape.com/back-to-school-preapproval",
-            instructionsHtml: "Doctor must submit pre-approval at <a href='https://l.3shape.com/back-to-school-preapproval' target='_blank'>https://l.3shape.com/back-to-school-preapproval</a> prior to purchase. Invoiced at full MSRP ($28,800); the full $5,400 savings is issued directly to the clinic via a 3Shape rebate check upon return of the TRIOS 4."
+            instructionsHtml: "Doctor must submit pre-approval at <a href='https://l.3shape.com/back-to-school-preapproval' target='_blank'>https://l.3shape.com/back-to-school-preapproval</a> prior to purchase. Invoiced at standard MSRP ($28,800); a $6,500 rebate check is issued directly to the clinic via 3Shape upon return of the TRIOS 4."
           },
           TRADE_IN_COMPETITIVE: { 
             name: "Trade-In: Competitive / TRIOS Scanner ($4,500 Rebate Check)", 
@@ -333,7 +333,7 @@
             code: "40122", 
             promoMSRP: 27900, 
             cost: 18500, 
-            rebate: 1500,
+            rebate: 1500, 
             actionType: "rebate",
             preapprovalUrl: "https://l.3shape.com/26Q3",
             instructionsHtml: "End-user must submit proof of purchase at <a href='https://l.3shape.com/26Q3' target='_blank'>l.3shape.com/26Q3</a> within 30 days of invoice to claim the $1,500 rebate check."
@@ -403,14 +403,14 @@
         standardCost: 18700,
         promos: {
           TRADE_UP_T3: { 
-            name: "🎒 Back to School Trade-Up: TRIOS 3 → TRIOS 5 ($10,000 Rebate Check)", 
+            name: "🎒 Back to School Trade-Up: TRIOS 3 → TRIOS 5 ($5,500 Rebate Check)", 
             code: "40119", 
-            promoMSRP: 26700, // Invoiced at full MSRP (no upfront discount)
+            promoMSRP: 26700, // Invoiced at standard MSRP
             cost: 18700, 
-            rebate: 10000, // Full savings via rebate check
+            rebate: 5500, // $3,500 base + $2,000 promo
             actionType: "preapproval",
             preapprovalUrl: "https://l.3shape.com/back-to-school-preapproval",
-            instructionsHtml: "Doctor must submit pre-approval at <a href='https://l.3shape.com/back-to-school-preapproval' target='_blank'>https://l.3shape.com/back-to-school-preapproval</a> prior to purchase. Invoiced at full MSRP ($26,700); the full $10,000 savings is issued directly to the clinic via a 3Shape rebate check upon return of the TRIOS 3."
+            instructionsHtml: "Doctor must submit pre-approval at <a href='https://l.3shape.com/back-to-school-preapproval' target='_blank'>https://l.3shape.com/back-to-school-preapproval</a> prior to purchase. Invoiced at standard MSRP ($26,700); a $5,500 rebate check is issued directly to the clinic via 3Shape upon return of the TRIOS 3."
           },
           TRADE_IN_COMPETITIVE: { 
             name: "Trade-In: Competitive / TRIOS Scanner ($3,500 Rebate Check)", 
@@ -437,7 +437,7 @@
             code: "40154", 
             promoMSRP: 19200, 
             cost: 12700, 
-            rebate: 1000,
+            rebate: 1000, 
             kitName: "TruAbutment ioConnect AOT Implant Kit",
             kitPrice: 3000,
             kitCost: 0,
@@ -450,7 +450,7 @@
             code: "40154", 
             promoMSRP: 19200, 
             cost: 12700, 
-            rebate: 1000,
+            rebate: 1000, 
             kitName: "TruAbutment ioConnect Straumann Implant Kit",
             kitPrice: 4000,
             kitCost: 0,
