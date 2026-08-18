@@ -18,7 +18,6 @@
       --green-bg: #c6f6d5;
       --dealer-blue: #2b6cb0;
       --dealer-bg: #ebf8ff;
-      --trade-badge: #d69e2e;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -44,7 +43,6 @@
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
     .badge-promo { background: #feebc8; color: #7b341e; }
-    .badge-trade { background: #fefcbf; color: #744210; border: 1px solid #ecc94b; }
 
     /* Switch styling */
     .switch-container { display: flex; align-items: center; justify-content: space-between; background: var(--dealer-bg); border: 1px solid #bee3f8; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; }
@@ -81,8 +79,9 @@
     .dealer-data-grid div span { color: var(--text-muted); display: block; }
     .dealer-data-grid div strong { color: var(--text-dark); font-size: 0.88rem; }
 
-    /* Trade-In Instruction Box */
-    .trade-instructions { background: #fffaf0; border: 1px solid #feebc8; border-radius: 6px; padding: 10px 12px; margin-bottom: 14px; font-size: 0.8rem; color: #7b341e; }
+    /* Trade-In Pre-Approval Box */
+    .trade-instructions { background: #fffaf0; border: 1.5px solid #ecc94b; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.82rem; color: #744210; }
+    .trade-instructions a { color: #b7791f; font-weight: 700; text-decoration: underline; }
 
     .perks-list { font-size: 0.78rem; color: #4a5568; background: #f0fff4; border: 1px solid #9ae6b4; border-radius: 6px; padding: 10px 12px; margin-bottom: 14px; }
     .perks-list ul { margin-left: 16px; margin-top: 3px; }
@@ -95,7 +94,7 @@
     .btn-outline { background: white; border: 1px solid var(--gray-border); color: var(--text-dark); }
     .btn-outline:hover { background: var(--gray-bg); }
 
-    /* Print styling */
+    /* Print styling: clean customer PDF */
     @media print {
       body { background: white; padding: 0; }
       .app-container { display: block; }
@@ -111,14 +110,14 @@
   <header>
     <div class="logo-area">
       <h1>3Shape TRIOS</h1>
-      <span>Q3 2026 Promotions & Trade-Up Quote Builder</span>
+      <span>Q3 2026 Quote & Workflow Builder</span>
     </div>
     <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">
       Valid: July 1 – Sept 30, 2026
     </div>
   </header>
 
-  <!-- Left: Controls -->
+  <!-- Left: Config Controls -->
   <div class="card config-panel">
     <div class="section-title">1. Clinic & Quote Details</div>
     <div class="grid-2">
@@ -142,9 +141,9 @@
       </div>
     </div>
 
-    <div class="section-title">2. Target Scanner & Promotion / Trade-Up</div>
+    <div class="section-title">2. Target Scanner & Promotion / Trade</div>
     <div class="form-group">
-      <label>Select New TRIOS Scanner</label>
+      <label>Select Target TRIOS Scanner</label>
       <select id="scannerSelect" onchange="handleScannerChange()">
         <option value="T6">TRIOS 6 (Standard MSRP: $28,800)</option>
         <option value="T5">TRIOS 5 (Standard MSRP: $26,700)</option>
@@ -155,13 +154,13 @@
     <div class="form-group">
       <label>Promotion / Trade-Up Program</label>
       <select id="promoSelect" onchange="updateQuote()">
-        <!-- Dynamic based on scanner -->
+        <!-- Injected via JS -->
       </select>
     </div>
 
-    <div class="section-title">3. Certified Hardware / Cart Configuration</div>
+    <div class="section-title">3. Certified PC / Cart Configuration</div>
     <div class="form-group">
-      <label>PC / Mobile Cart Option</label>
+      <label>Hardware Configuration</label>
       <select id="pcSelect" onchange="updateQuote()">
         <option value="DELL_PRO">Dell Pro Max Plus w/ 3-Yr Support (MSRP: $4,350 | Cost: $4,050)</option>
         <option value="HP_ZBOOK">HP ZBook G11 w/ 3-Yr Warranty (MSRP: $1,850 | Cost: $1,700)</option>
@@ -171,7 +170,7 @@
       </select>
     </div>
 
-    <div class="section-title">4. Consumables & Custom Margin Adjustment</div>
+    <div class="section-title">4. Consumables & Margin Adjustment</div>
     <div class="grid-2">
       <div class="form-group">
         <label>Ready Tips Boxes ($50 promo | $34 cost)</label>
@@ -183,9 +182,9 @@
       </div>
     </div>
 
-    <div class="section-title">5. Internal Representative Settings</div>
+    <div class="section-title">5. Internal Cost & Margin Mode</div>
     <div class="switch-container">
-      <span class="switch-label">📊 Show Dealer Costs, PO Breakdown & Margins</span>
+      <span class="switch-label">📊 Show Dealer Costs, PO Codes & Profit</span>
       <label class="toggle-switch">
         <input type="checkbox" id="showDealerMargins" checked onchange="updateQuote()">
         <span class="slider"></span>
@@ -208,7 +207,7 @@
       </div>
     </div>
 
-    <!-- Dealer Margin Box -->
+    <!-- Dealer Internal Margin Box -->
     <div class="dealer-margins-box" id="dealerBox">
       <h4>
         <span>🔒 CONFIDENTIAL DEALER BREAKDOWN</span>
@@ -228,26 +227,26 @@
           <strong id="outItemCodes" style="font-size:0.75rem;">-</strong>
         </div>
         <div>
-          <span>PO Promotion Code:</span>
+          <span>PO Promo Code:</span>
           <strong id="outPoCodeBadge" style="color: #c53030;">-</strong>
         </div>
       </div>
     </div>
 
-    <!-- Trade-In Pre-approval instructions if trade is active -->
+    <!-- Trade-In Pre-Approval Requirement Box -->
     <div class="trade-instructions" id="tradeBox" style="display: none;">
-      <strong>🔄 Trade-Up Requirements:</strong>
-      <div id="tradeInstructionsText" style="margin-top: 3px; font-size: 0.75rem; line-height: 1.3;"></div>
+      <strong style="display: flex; align-items: center; gap: 4px;">🔄 Trade Pre-Approval Required:</strong>
+      <div id="tradeInstructionsText" style="margin-top: 4px; line-height: 1.4;"></div>
     </div>
 
-    <!-- Table -->
+    <!-- Pricing Table -->
     <table class="pricing-table">
       <thead>
         <tr>
           <th>Item Description</th>
           <th class="num dealer-col">Dealer Cost</th>
           <th class="num">Standard MSRP</th>
-          <th class="num">Promo Price</th>
+          <th class="num">Invoice Price</th>
         </tr>
       </thead>
       <tbody id="pricingBody">
@@ -255,7 +254,7 @@
       </tbody>
     </table>
 
-    <!-- Totals -->
+    <!-- Totals Area -->
     <div class="totals-area">
       <div class="total-row">
         <span>Total List MSRP:</span>
@@ -283,13 +282,13 @@
     <div class="perks-list">
       <strong>Included with this configuration:</strong>
       <ul>
-        <li><strong>FREE 2-Hour TRIOS Masterclass:</strong> Personalized 1-on-1 virtual training ($500 value, Code: <code>TRIOSQ3FREE</code>).</li>
-        <li><strong>$1,000 3Shape Lab Credit:</strong> Applied directly to your lab account via <code>3shape.com/labcredit</code>.</li>
+        <li><strong>FREE 2-Hour TRIOS Masterclass:</strong> Personalized virtual training ($500 value, Code: <code>TRIOSQ3FREE</code>).</li>
+        <li><strong>$1,000 3Shape Lab Credit:</strong> Applied directly to lab account via <code>3shape.com/labcredit</code>.</li>
         <li><strong>1st Year TRIOS Care Included:</strong> Comprehensive warranty & support with option to switch to free TRIOS Only plan after Year 1.</li>
       </ul>
     </div>
 
-    <!-- Buttons -->
+    <!-- Actions -->
     <div class="btn-group">
       <button class="btn btn-outline" onclick="copySummary()">📋 Copy Summary</button>
       <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
@@ -300,7 +299,7 @@
 <script>
   document.getElementById('quoteDate').valueAsDate = new Date();
 
-  // Full database with Trade-Up sections and TruAbutment bundles
+  // Full database with revised trade-up logic (No upfront discount, full savings via rebate check)
   const DB = {
     scanners: {
       T6: {
@@ -310,22 +309,24 @@
         standardCost: 20100,
         promos: {
           TRADE_UP_T4: { 
-            name: "🔥 Trade-Up: TRIOS 4 → TRIOS 6 ($4,500 Rebate Check)", 
+            name: "🎒 Back to School Trade-Up: TRIOS 4 → TRIOS 6 ($5,400 Rebate Check)", 
             code: "40122", 
-            promoMSRP: 27900, 
-            cost: 18500, 
-            rebate: 4500,
+            promoMSRP: 28800, // Invoiced at full MSRP; no upfront discount
+            cost: 20100, 
+            rebate: 5400, // Full savings provided via rebate check
             isTrade: true,
-            tradeDesc: "Upgrade your TRIOS 4 to TRIOS 6. Submit trade pre-approval at 3shape.com/redeem prior to purchase. Return TRIOS 4 to 3Shape within 30 days to receive $4,500 rebate check."
+            preapprovalUrl: "https://l.3shape.com/back-to-school-preapproval",
+            tradeDesc: "Doctor must submit pre-approval at <a href='https://l.3shape.com/back-to-school-preapproval' target='_blank'>l.3shape.com/back-to-school-preapproval</a> prior to purchase. Invoiced at full MSRP ($28,800) with no upfront discount; the full $5,400 savings is issued directly to the clinic via a 3Shape rebate check upon return of the TRIOS 4."
           },
           TRADE_IN_COMPETITIVE: { 
-            name: "Trade-In: Competitive Scanner → TRIOS 6 ($4,500 Rebate Check)", 
+            name: "Trade-In: Competitive / TRIOS Scanner ($4,500 Rebate Check)", 
             code: "40122", 
             promoMSRP: 27900, 
             cost: 18500, 
-            rebate: 4500,
+            rebate: 4500, 
             isTrade: true,
-            tradeDesc: "Trade competitive scanner (iTero, Medit, Carestream, etc.) for $4,500 rebate check upon return of old device to 3Shape."
+            preapprovalUrl: "https://www.3shape.com/redeem",
+            tradeDesc: "Doctor must submit pre-approval at <a href='https://www.3shape.com/redeem' target='_blank'>3shape.com/redeem</a> prior to purchase. $4,500 rebate check is issued directly to the end user upon receipt of eligible trade scanner to 3Shape."
           },
           STANDARD_REBATE: { 
             name: "Standard Promotion ($1,500 Rebate Check)", 
@@ -396,25 +397,27 @@
         standardCost: 18700,
         promos: {
           TRADE_UP_T3: { 
-            name: "🔥 Trade-Up: TRIOS 3 → TRIOS 5 ($3,500 Rebate Check + $6,500 Off)", 
+            name: "🎒 Back to School Trade-Up: TRIOS 3 → TRIOS 5 ($10,000 Rebate Check)", 
             code: "40119", 
-            promoMSRP: 20200, 
-            cost: 13700, 
-            rebate: 3500,
+            promoMSRP: 26700, // Invoiced at full MSRP; no upfront discount
+            cost: 18700, 
+            rebate: 10000, // Full savings provided via rebate check ($6,500 promo + $3,500 trade)
             isTrade: true,
-            tradeDesc: "Upgrade your TRIOS 3 to TRIOS 5. Upfront discount of $6,500 applied at invoice. Submit trade pre-approval at 3shape.com/redeem and return old TRIOS 3 to receive $3,500 rebate check."
+            preapprovalUrl: "https://l.3shape.com/back-to-school-preapproval",
+            tradeDesc: "Doctor must submit pre-approval at <a href='https://l.3shape.com/back-to-school-preapproval' target='_blank'>l.3shape.com/back-to-school-preapproval</a> prior to purchase. Invoiced at full MSRP ($26,700) with no upfront discount; the full $10,000 savings is issued directly to the clinic via a 3Shape rebate check upon return of the TRIOS 3."
           },
           TRADE_IN_COMPETITIVE: { 
-            name: "Trade-In: Competitive Scanner → TRIOS 5 ($3,500 Rebate Check)", 
+            name: "Trade-In: Competitive / TRIOS Scanner ($3,500 Rebate Check)", 
             code: "40119", 
             promoMSRP: 20200, 
             cost: 13700, 
-            rebate: 3500,
+            rebate: 3500, 
             isTrade: true,
-            tradeDesc: "Trade competitive scanner for $3,500 rebate check upon return of old device to 3Shape."
+            preapprovalUrl: "https://www.3shape.com/redeem",
+            tradeDesc: "Doctor must submit pre-approval at <a href='https://www.3shape.com/redeem' target='_blank'>3shape.com/redeem</a> prior to purchase. $3,500 rebate check is issued directly to the end user upon receipt of eligible trade scanner to 3Shape."
           },
           STANDARD_REBATE: { 
-            name: "Grow with TRIOS 5 ($1,000 Rebate Check + $6,500 Off)", 
+            name: "Grow with TRIOS 5 ($1,000 Rebate Check + $6,500 Upfront Off)", 
             code: "40119", 
             promoMSRP: 20200, 
             cost: 13700, 
@@ -519,11 +522,11 @@
     document.getElementById('outPromoCode').textContent = `PO PROMO CODE: ${promoData.code}`;
     document.getElementById('outPoCodeBadge').textContent = promoData.code;
 
-    // Trade Instructions Box
+    // Trade Instructions Box & URL
     const tradeBox = document.getElementById('tradeBox');
     if (promoData.isTrade) {
       tradeBox.style.display = 'block';
-      document.getElementById('tradeInstructionsText').textContent = promoData.tradeDesc;
+      document.getElementById('tradeInstructionsText').innerHTML = promoData.tradeDesc;
     } else {
       tradeBox.style.display = 'none';
     }
@@ -548,7 +551,7 @@
       </tr>
     `;
 
-    // 2. PC row
+    // 2. Hardware / PC row
     if (pcKey !== 'NONE') {
       tbody += `
         <tr>
@@ -618,7 +621,16 @@
     const netInvestment = invoiceTotal - rebateAmount;
 
     document.getElementById('outSubtotal').textContent = formatMoney(totalList);
-    document.getElementById('outUpfrontSavings').textContent = `-${formatMoney(upfrontSavings)}`;
+    
+    // Upfront Discount Row Handling
+    const upfrontRow = document.getElementById('upfrontDiscountRow');
+    if (upfrontSavings > 0) {
+      upfrontRow.style.display = 'flex';
+      document.getElementById('outUpfrontSavings').textContent = `-${formatMoney(upfrontSavings)}`;
+    } else {
+      upfrontRow.style.display = 'none';
+    }
+
     document.getElementById('outInvoiceTotal').textContent = formatMoney(invoiceTotal);
 
     const rebateRow = document.getElementById('rebateRow');
@@ -668,10 +680,11 @@
     text += `• Hardware: ${document.getElementById('pcSelect').selectedOptions[0].text}\n`;
     text += `• Invoice Purchase Price: ${invoice}\n`;
     if (rebate) text += `• Mail-In Rebate Check: ${rebate}\n`;
-    text += `• Net Doctor Investment: ${net}\n`;
+    text += `• Doctor Net Investment: ${net}\n`;
 
     if (promo.isTrade) {
-      text += `\nTrade-In Notice: ${promo.tradeDesc}\n`;
+      text += `\n⚠️ Pre-Approval Required Prior to Order:\n`;
+      text += `Pre-Approval Link: ${promo.preapprovalUrl}\n`;
     }
 
     if (showDealer) {
