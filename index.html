@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3Shape TRIOS Q3 Quote Builder</title>
+  <style>
+    :root {
+      --primary: #c8102e; /* 3Shape Red */
+      --primary-dark: #9e0c24;
+      --secondary: #1a202c;
+      --accent: #2b6cb0;
+      --gray-bg: #f7fafc;
+      --gray-border: #e2e8f0;
+      --text-dark: #2d3748;
+      --text-muted: #718096;
+      --green: #276749;
+      --green-bg: #c6f6d5;
+      --dealer-blue: #2b6cb0;
+      --dealer-bg: #ebf8ff;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    body { background-color: #edf2f7; color: var(--text-dark); padding: 16px; }
+
+    .app-container { max-width: 1250px; margin: 0 auto; display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 20px; }
+    @media (max-width: 900px) {
+      .app-container { grid-template-columns: 1fr; }
+    }
+
+    .card { background: #fff; border-radius: 10px; padding: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
+    
+    header { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; background: white; padding: 14px 20px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+    .logo-area h1 { font-size: 1.3rem; color: var(--primary); font-weight: 800; }
+    .logo-area span { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+    .section-title { font-size: 1rem; font-weight: 700; color: var(--secondary); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid var(--gray-bg); display: flex; justify-content: space-between; align-items: center; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text-dark); margin-bottom: 5px; }
+    input[type="text"], input[type="date"], input[type="number"], select { width: 100%; padding: 9px 11px; border: 1px solid var(--gray-border); border-radius: 6px; font-size: 0.9rem; background: #fff; }
+    input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2); }
+
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
+    .badge-promo { background: #feebc8; color: #7b341e; }
+
+    /* Switch styling */
+    .switch-container { display: flex; align-items: center; justify-content: space-between; background: var(--dealer-bg); border: 1px solid #bee3f8; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; }
+    .switch-label { font-size: 0.88rem; font-weight: 700; color: var(--dealer-blue); }
+    .toggle-switch { position: relative; width: 44px; height: 24px; display: inline-block; }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #cbd5e0; border-radius: 24px; transition: .3s; }
+    .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: .3s; }
+    input:checked + .slider { background-color: var(--dealer-blue); }
+    input:checked + .slider:before { transform: translateX(20px); }
+
+    /* Quote Preview */
+    .quote-preview { background: #fff; border: 1px solid var(--gray-border); border-radius: 8px; padding: 20px; position: sticky; top: 15px; }
+    .quote-header { border-bottom: 2px solid var(--primary); padding-bottom: 12px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: flex-start; }
+    .quote-client-details { font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
+    .quote-client-details strong { color: var(--text-dark); }
+    
+    .pricing-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; font-size: 0.88rem; }
+    .pricing-table th { text-align: left; padding: 8px 4px; border-bottom: 1px solid var(--gray-border); color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; }
+    .pricing-table td { padding: 9px 4px; border-bottom: 1px solid var(--gray-bg); vertical-align: top; }
+    .pricing-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .pricing-table .dealer-col { color: var(--dealer-blue); font-weight: 600; background-color: #f7fafc; }
+    
+    .totals-area { background: var(--gray-bg); padding: 14px; border-radius: 8px; margin-bottom: 14px; }
+    .total-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 0.88rem; }
+    .total-row.grand { font-size: 1.1rem; font-weight: 800; color: var(--primary); border-top: 2px solid var(--gray-border); padding-top: 8px; margin-top: 6px; }
+    .total-row.rebate-row { color: var(--green); font-weight: 700; }
+    .total-row.savings { color: #c53030; font-weight: 600; font-size: 0.82rem; }
+
+    /* Internal Dealer Margin Box */
+    .dealer-margins-box { background: var(--dealer-bg); border: 1.5px dashed var(--dealer-blue); border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.85rem; }
+    .dealer-margins-box h4 { color: var(--dealer-blue); margin-bottom: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; border-bottom: 1px solid #bee3f8; padding-bottom: 4px; }
+    .dealer-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.82rem; margin-top: 6px; }
+    .dealer-data-grid div span { color: var(--text-muted); display: block; }
+    .dealer-data-grid div strong { color: var(--text-dark); font-size: 0.9rem; }
+
+    .perks-list { font-size: 0.78rem; color: #4a5568; background: #f0fff4; border: 1px solid #9ae6b4; border-radius: 6px; padding: 10px 12px; margin-bottom: 14px; }
+    .perks-list ul { margin-left: 16px; margin-top: 3px; }
+    .perks-list li { margin-bottom: 2px; }
+
+    .btn-group { display: flex; gap: 10px; }
+    .btn { flex: 1; padding: 11px; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; text-align: center; font-size: 0.88rem; transition: background 0.2s; }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: var(--primary-dark); }
+    .btn-outline { background: white; border: 1px solid var(--gray-border); color: var(--text-dark); }
+    .btn-outline:hover { background: var(--gray-bg); }
+
+    /* Print styling: clean customer PDF */
+    @media print {
+      body { background: white; padding: 0; }
+      .app-container { display: block; }
+      .config-panel, header, .btn-group, .switch-container, .dealer-margins-box, .dealer-col, th.dealer-col { display: none !important; }
+      .quote-preview { border: none; box-shadow: none; padding: 0; position: static; }
+      .card { box-shadow: none; border: none; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <header>
+    <div class="logo-area">
+      <h1>3Shape TRIOS</h1>
+      <span>Q3 2026 Quote & Cost Builder</span>
+    </div>
+    <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">
+      Valid: July 1 – Sept 30, 2026
+    </div>
+  </header>
+
+  <!-- Left: Config Controls -->
+  <div class="card config-panel">
+    <div class="section-title">1. Clinic & Quote Details</div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Doctor / Clinic Name</label>
+        <input type="text" id="drName" placeholder="Dr. Jane Smith" value="Dr. Smith" oninput="updateQuote()">
+      </div>
+      <div class="form-group">
+        <label>Practice Name</label>
+        <input type="text" id="practiceName" placeholder="Elite Dental Care" value="Elite Dental Care" oninput="updateQuote()">
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Quote Date</label>
+        <input type="date" id="quoteDate" onchange="updateQuote()">
+      </div>
+      <div class="form-group">
+        <label>Sales Rep Name</label>
+        <input type="text" id="repName" placeholder="Rep Name" oninput="updateQuote()">
+      </div>
+    </div>
+
+    <div class="section-title">2. Scanner & Quarterly Offer</div>
+    <div class="form-group">
+      <label>Scanner Model</label>
+      <select id="scannerSelect" onchange="handleScannerChange()">
+        <option value="T6">TRIOS 6 (Standard MSRP: $28,800)</option>
+        <option value="T5">TRIOS 5 (Standard MSRP: $26,700)</option>
+        <option value="T3">TRIOS 3 (Standard MSRP: $18,000)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Promotion / Trade / Bundle</label>
+      <select id="promoSelect" onchange="updateQuote()">
+        <!-- Injected via JS -->
+      </select>
+    </div>
+
+    <div class="section-title">3. Certified PC / Cart</div>
+    <div class="form-group">
+      <label>Hardware Configuration</label>
+      <select id="pcSelect" onchange="updateQuote()">
+        <option value="DELL_PRO">Dell Pro Max Plus w/ 3-Yr Support (MSRP: $4,350 | Cost: $4,050)</option>
+        <option value="HP_ZBOOK">HP ZBook G11 w/ 3-Yr Warranty (MSRP: $1,850 | Cost: $1,700)</option>
+        <option value="MOVE_PLUS">TRIOS MOVE+ Standalone Cart (MSRP: $7,200 | Cost: $6,100)</option>
+        <option value="MOVE_PRO">TRIOS MOVE Pro Standalone Cart (MSRP: $8,000 | Cost: $6,800)</option>
+        <option value="NONE">No PC / Existing Approved Hardware ($0)</option>
+      </select>
+    </div>
+
+    <div class="section-title">4. Consumables & Custom Margin Adjustment</div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label>Ready Tips Boxes ($50 promo | $34 cost)</label>
+        <input type="number" id="readyTipsQty" min="0" value="0" oninput="updateQuote()">
+      </div>
+      <div class="form-group">
+        <label>Dealer Custom Credit / Adjustment ($)</label>
+        <input type="number" id="customDiscount" value="0" oninput="updateQuote()">
+      </div>
+    </div>
+
+    <div class="section-title">5. Internal Cost & Margin Mode</div>
+    <div class="switch-container">
+      <span class="switch-label">📊 Show Dealer Costs, PO Breakdown & Margins</span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="showDealerMargins" checked onchange="updateQuote()">
+        <span class="slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Right: Live Quote Preview -->
+  <div class="card quote-preview" id="quoteCard">
+    <div class="quote-header">
+      <div>
+        <h2 style="color: var(--primary); font-size: 1.25rem;">TRIOS Quote & Proposal</h2>
+        <div class="quote-client-details" style="margin-top: 3px;">
+          Prepared for: <strong id="outDrName">Dr. Smith</strong> | <span id="outPractice">Elite Dental Care</span><br>
+          Date: <span id="outDate"></span> | Valid thru: Sept 30, 2026
+        </div>
+      </div>
+      <div style="text-align: right;">
+        <span class="badge badge-promo" id="outPromoCode">PO PROMO CODE: 40122</span>
+      </div>
+    </div>
+
+    <!-- Dealer Internal Margin Box -->
+    <div class="dealer-margins-box" id="dealerBox">
+      <h4>
+        <span>🔒 CONFIDENTIAL DEALER BREAKDOWN</span>
+        <span id="dealerMarginPct" style="color: var(--primary-dark);">Margin: 0%</span>
+      </h4>
+      <div class="dealer-data-grid">
+        <div>
+          <span>Total Reseller PO Cost:</span>
+          <strong id="outResellerCost" style="color: var(--dealer-blue);">$0</strong>
+        </div>
+        <div>
+          <span>Dealer Gross Profit:</span>
+          <strong id="outGrossProfit" style="color: var(--green);">$0</strong>
+        </div>
+        <div>
+          <span>PO Item Numbers:</span>
+          <strong id="outItemCodes" style="font-size:0.75rem;">-</strong>
+        </div>
+        <div>
+          <span>Required Promotion Code:</span>
+          <strong id="outPoCodeBadge" style="color: #c53030;">-</strong>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing Breakdown Table -->
+    <table class="pricing-table">
+      <thead>
+        <tr>
+          <th>Item Description</th>
+          <th class="num dealer-col">Dealer Cost</th>
+          <th class="num">Standard MSRP</th>
+          <th class="num">Promo Price</th>
+        </tr>
+      </thead>
+      <tbody id="pricingBody">
+        <!-- Injected via JS -->
+      </tbody>
+    </table>
+
+    <!-- Totals Area -->
+    <div class="totals-area">
+      <div class="total-row">
+        <span>Total List MSRP:</span>
+        <span id="outSubtotal" class="num">$0</span>
+      </div>
+      <div class="total-row savings" id="upfrontDiscountRow">
+        <span>Upfront Promotional Discount:</span>
+        <span id="outUpfrontSavings" class="num">-$0</span>
+      </div>
+      <div class="total-row grand">
+        <span>Invoice Purchase Price:</span>
+        <span id="outInvoiceTotal" class="num">$0</span>
+      </div>
+      <div class="total-row rebate-row" id="rebateRow">
+        <span id="rebateLabel">3Shape Mail-in Rebate Check:</span>
+        <span id="outRebate" class="num">-$0</span>
+      </div>
+      <div class="total-row" style="font-size: 1.05rem; font-weight: 800; color: #1a202c; border-top: 1px dashed #cbd5e0; padding-top: 8px; margin-top: 6px;">
+        <span>Doctor Net Investment (After Rebate):</span>
+        <span id="outNetPrice" class="num">$0</span>
+      </div>
+    </div>
+
+    <!-- Value Adds -->
+    <div class="perks-list">
+      <strong>Included with this configuration:</strong>
+      <ul>
+        <li><strong>FREE 2-Hour TRIOS Masterclass:</strong> Personalized 1-on-1 virtual training ($500 value, Code: <code>TRIOSQ3FREE</code>).</li>
+        <li><strong>$1,000 3Shape Lab Credit:</strong> Applied directly to preferred lab account via <code>3shape.com/labcredit</code>.</li>
+        <li><strong>1st Year TRIOS Care Included:</strong> Comprehensive warranty & support with option to switch to free TRIOS Only plan after Year 1.</li>
+      </ul>
+    </div>
+
+    <!-- Actions -->
+    <div class="btn-group">
+      <button class="btn btn-outline" onclick="copySummary()">📋 Copy Summary</button>
+      <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Set default date to today
+  document.getElementById('quoteDate').valueAsDate = new Date();
+
+  // Pricing Database from 2026 Q3 Confidential Program
+  const DB = {
+    scanners: {
+      T6: {
+        name: "TRIOS 6 Intraoral Scanner",
+        item: "22003200",
+        listMSRP: 28800,
+        standardCost: 20100,
+        promos: {
+          STANDARD_REBATE: { 
+            name: "Standard Promo ($1,500 Rebate)", 
+            code: "40122", 
+            promoMSRP: 27900, 
+            cost: 18500, 
+            rebate: 1500 
+          },
+          ADDITIONAL: { 
+            name: "Additional Scanner Promo (TRIOS/iTero/Primescan)", 
+            code: "40123", 
+            promoMSRP: 24800, 
+            cost: 17800, 
+            rebate: 0 
+          },
+          TRADE_IN: { 
+            name: "Competitive / TRIOS Trade-in ($4,500 Rebate)", 
+            code: "40122", 
+            promoMSRP: 27900, 
+            cost: 18500, 
+            rebate: 4500 
+          },
+          IOCONNECT_AOT: { 
+            name: "TruAbutment ioConnect AOT Kit Bundle ($1,500 Rebate)", 
+            code: "40153", 
+            promoMSRP: 26900, 
+            cost: 17500, 
+            rebate: 1500,
+            kitName: "TruAbutment ioConnect AOT Implant Kit",
+            kitPrice: 3000,
+            kitCost: 0
+          },
+          IOCONNECT_STRAUMANN: { 
+            name: "TruAbutment ioConnect Straumann Kit Bundle ($1,500 Rebate)", 
+            code: "40153", 
+            promoMSRP: 26900, 
+            cost: 17500, 
+            rebate: 1500,
+            kitName: "TruAbutment ioConnect Straumann Implant Kit",
+            kitPrice: 4000,
+            kitCost: 0
+          },
+          IOCONNECT_ADDL_AOT: { 
+            name: "TruAbutment ioConnect Additional Scanner - AOT Kit", 
+            code: "40155", 
+            promoMSRP: 23800, 
+            cost: 16800, 
+            rebate: 0,
+            kitName: "TruAbutment ioConnect AOT Implant Kit",
+            kitPrice: 3000,
+            kitCost: 0
+          },
+          IOCONNECT_ADDL_STRAUMANN: { 
+            name: "TruAbutment ioConnect Additional Scanner - Straumann Kit", 
+            code: "40155", 
+            promoMSRP: 23800, 
+            cost: 16800, 
+            rebate: 0,
+            kitName: "TruAbutment ioConnect Straumann Implant Kit",
+            kitPrice: 4000,
+            kitCost: 0
+          }
+        }
+      },
+      T5: {
+        name: "TRIOS 5 Intraoral Scanner",
+        item: "22004025",
+        listMSRP: 26700,
+        standardCost: 18700,
+        promos: {
+          STANDARD_REBATE: { 
+            name: "Grow with TRIOS 5 ($1,000 Rebate)", 
+            code: "40119", 
+            promoMSRP: 20200, 
+            cost: 13700, 
+            rebate: 1000 
+          },
+          TRADE_IN: { 
+            name: "Competitive / TRIOS Trade-in ($3,500 Rebate)", 
+            code: "40119", 
+            promoMSRP: 20200, 
+            cost: 13700, 
+            rebate: 3500 
+          },
+          IOCONNECT_AOT: { 
+            name: "TruAbutment ioConnect AOT Kit Bundle ($1,000 Rebate)", 
+            code: "40154", 
+            promoMSRP: 19200, 
+            cost: 12700, 
+            rebate: 1000,
+            kitName: "TruAbutment ioConnect AOT Implant Kit",
+            kitPrice: 3000,
+            kitCost: 0
+          },
+          IOCONNECT_STRAUMANN: { 
+            name: "TruAbutment ioConnect Straumann Kit Bundle ($1,000 Rebate)", 
+            code: "40154", 
+            promoMSRP: 19200, 
+            cost: 12700, 
+            rebate: 1000,
+            kitName: "TruAbutment ioConnect Straumann Implant Kit",
+            kitPrice: 4000,
+            kitCost: 0
+          }
+        }
+      },
+      T3: {
+        name: "TRIOS 3 Intraoral Scanner",
+        item: "22004000",
+        listMSRP: 18000,
+        standardCost: 12600,
+        promos: {
+          VALUE_PROMO: { 
+            name: "Value Promotion (Promo Price $10,550)", 
+            code: "40120", 
+            promoMSRP: 10550, 
+            cost: 6400, 
+            rebate: 0 
+          }
+        }
+      }
+    },
+    pc: {
+      DELL_PRO: { name: 'Dell Pro Max Plus (3-Yr Support)', item: '20000255', msrp: 4350, cost: 4050 },
+      HP_ZBOOK: { name: 'HP ZBook G11 Laptop (3-Yr Warranty)', item: '20000250', msrp: 1850, cost: 1700 },
+      MOVE_PLUS: { name: 'TRIOS MOVE+ Standalone Cart', item: '22002375', msrp: 7200, cost: 6100 },
+      MOVE_PRO: { name: 'TRIOS MOVE Pro Standalone Cart', item: '22003210', msrp: 8000, cost: 6800 },
+      NONE: { name: 'No PC / Client Existing Hardware', item: '-', msrp: 0, cost: 0 }
+    },
+    readyTips: {
+      item: '10036057',
+      promoCode: '40113',
+      regMSRP: 75,
+      promoMSRP: 50,
+      cost: 34
+    }
+  };
+
+  function handleScannerChange() {
+    const scannerKey = document.getElementById('scannerSelect').value;
+    const promoSelect = document.getElementById('promoSelect');
+    promoSelect.innerHTML = '';
+
+    const promos = DB.scanners[scannerKey].promos;
+    for (const [key, p] of Object.entries(promos)) {
+      const opt = document.createElement('option');
+      opt.value = key;
+      opt.textContent = `${p.name} [Code: ${p.code}]`;
+      promoSelect.appendChild(opt);
+    }
+    updateQuote();
+  }
+
+  function formatMoney(num) {
+    return '$' + Number(num).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function updateQuote() {
+    const drName = document.getElementById('drName').value || 'Doctor';
+    const practice = document.getElementById('practiceName').value || '';
+    const quoteDate = document.getElementById('quoteDate').value;
+    const scannerKey = document.getElementById('scannerSelect').value;
+    const promoKey = document.getElementById('promoSelect').value;
+    const pcKey = document.getElementById('pcSelect').value;
+    const readyTipsQty = parseInt(document.getElementById('readyTipsQty').value) || 0;
+    const customDiscount = parseFloat(document.getElementById('customDiscount').value) || 0;
+    const showDealer = document.getElementById('showDealerMargins').checked;
+
+    // Header info
+    document.getElementById('outDrName').textContent = drName;
+    document.getElementById('outPractice').textContent = practice;
+    document.getElementById('outDate').textContent = quoteDate ? new Date(quoteDate).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}) : '';
+
+    const scannerData = DB.scanners[scannerKey];
+    const promoData = scannerData.promos[promoKey] || Object.values(scannerData.promos)[0];
+    const pcData = DB.pc[pcKey];
+
+    document.getElementById('outPromoCode').textContent = `PO PROMO CODE: ${promoData.code}`;
+    document.getElementById('outPoCodeBadge').textContent = promoData.code;
+
+    // Itemized calculation
+    let tbody = '';
+    let totalList = scannerData.listMSRP + pcData.msrp;
+    let invoiceTotal = promoData.promoMSRP + pcData.msrp - customDiscount;
+    let totalCost = promoData.cost + pcData.cost;
+    let itemCodesList = [scannerData.item];
+    if (pcData.item !== '-') itemCodesList.push(pcData.item);
+
+    const costCell = (costVal) => showDealer ? `<td class="num dealer-col">${formatMoney(costVal)}</td>` : '';
+
+    // 1. Scanner row
+    tbody += `
+      <tr>
+        <td><strong>${scannerData.name}</strong><br><small style="color:var(--text-muted);">${promoData.name} (Item #${scannerData.item})</small></td>
+        ${costCell(promoData.cost)}
+        <td class="num">${formatMoney(scannerData.listMSRP)}</td>
+        <td class="num"><strong>${formatMoney(promoData.promoMSRP)}</strong></td>
+      </tr>
+    `;
+
+    // 2. Hardware / PC row
+    if (pcKey !== 'NONE') {
+      tbody += `
+        <tr>
+          <td><strong>${pcData.name}</strong><br><small style="color:var(--text-muted);">Item #${pcData.item}</small></td>
+          ${costCell(pcData.cost)}
+          <td class="num">${formatMoney(pcData.msrp)}</td>
+          <td class="num"><strong>${formatMoney(pcData.msrp)}</strong></td>
+        </tr>
+      `;
+    }
+
+    // 3. TruAbutment ioConnect Kit (if included)
+    if (promoData.kitName) {
+      totalList += promoData.kitPrice;
+      invoiceTotal += promoData.kitPrice;
+      tbody += `
+        <tr>
+          <td><strong>${promoData.kitName}</strong><br><small style="color:var(--text-muted);">Workflow Bundle Component</small></td>
+          ${costCell(promoData.kitCost || 0)}
+          <td class="num">${formatMoney(promoData.kitPrice)}</td>
+          <td class="num"><strong>${formatMoney(promoData.kitPrice)}</strong></td>
+        </tr>
+      `;
+    }
+
+    // 4. Ready Tips
+    if (readyTipsQty > 0) {
+      const tipsList = readyTipsQty * DB.readyTips.regMSRP;
+      const tipsPromo = readyTipsQty * DB.readyTips.promoMSRP;
+      const tipsCost = readyTipsQty * DB.readyTips.cost;
+      totalList += tipsList;
+      invoiceTotal += tipsPromo;
+      totalCost += tipsCost;
+      itemCodesList.push(`${DB.readyTips.item} (x${readyTipsQty})`);
+
+      tbody += `
+        <tr>
+          <td><strong>TRIOS Ready Tips (${readyTipsQty} boxes)</strong><br><small style="color:var(--text-muted);">Promo Code 40113 (Item #${DB.readyTips.item})</small></td>
+          ${costCell(tipsCost)}
+          <td class="num">${formatMoney(tipsList)}</td>
+          <td class="num"><strong>${formatMoney(tipsPromo)}</strong></td>
+        </tr>
+      `;
+    }
+
+    // 5. Custom Adjustment
+    if (customDiscount > 0) {
+      tbody += `
+        <tr>
+          <td><strong style="color: #c53030;">Dealer Additional Adjustment</strong></td>
+          ${showDealer ? `<td class="num dealer-col">-</td>` : ''}
+          <td class="num">-</td>
+          <td class="num" style="color: #c53030;"><strong>-${formatMoney(customDiscount)}</strong></td>
+        </tr>
+      `;
+    }
+
+    document.getElementById('pricingBody').innerHTML = tbody;
+
+    // Toggle table header for Dealer Cost column
+    const dealerHeaders = document.querySelectorAll('th.dealer-col');
+    dealerHeaders.forEach(th => th.style.display = showDealer ? 'table-cell' : 'none');
+
+    // Totals
+    const upfrontSavings = totalList - invoiceTotal;
+    const rebateAmount = promoData.rebate;
+    const netInvestment = invoiceTotal - rebateAmount;
+
+    document.getElementById('outSubtotal').textContent = formatMoney(totalList);
+    document.getElementById('outUpfrontSavings').textContent = `-${formatMoney(upfrontSavings)}`;
+    document.getElementById('outInvoiceTotal').textContent = formatMoney(invoiceTotal);
+
+    const rebateRow = document.getElementById('rebateRow');
+    if (rebateAmount > 0) {
+      rebateRow.style.display = 'flex';
+      document.getElementById('outRebate').textContent = `-${formatMoney(rebateAmount)}`;
+    } else {
+      rebateRow.style.display = 'none';
+    }
+
+    document.getElementById('outNetPrice').textContent = formatMoney(netInvestment);
+
+    // Dealer Margins & Costs Breakdown
+    const dealerBox = document.getElementById('dealerBox');
+    if (showDealer) {
+      dealerBox.style.display = 'block';
+      const grossProfit = invoiceTotal - totalCost;
+      const marginPct = invoiceTotal > 0 ? ((grossProfit / invoiceTotal) * 100).toFixed(1) : 0;
+
+      document.getElementById('outResellerCost').textContent = formatMoney(totalCost);
+      document.getElementById('outGrossProfit').textContent = `${formatMoney(grossProfit)} (${marginPct}%)`;
+      document.getElementById('dealerMarginPct').textContent = `Gross Margin: ${marginPct}%`;
+      document.getElementById('outItemCodes').textContent = itemCodesList.join(', ');
+    } else {
+      dealerBox.style.display = 'none';
+    }
+  }
+
+  function copySummary() {
+    const dr = document.getElementById('drName').value || 'Doctor';
+    const practice = document.getElementById('practiceName').value;
+    const scannerKey = document.getElementById('scannerSelect').value;
+    const promoKey = document.getElementById('promoSelect').value;
+    const scanner = DB.scanners[scannerKey];
+    const promo = scanner.promos[promoKey] || Object.values(scanner.promos)[0];
+    const invoice = document.getElementById('outInvoiceTotal').textContent;
+    const rebate = promo.rebate > 0 ? formatMoney(promo.rebate) : null;
+    const net = document.getElementById('outNetPrice').textContent;
+    const showDealer = document.getElementById('showDealerMargins').checked;
+
+    let text = `3Shape TRIOS Quote Summary for ${dr} (${practice})\n`;
+    text += `--------------------------------------------------\n`;
+    text += `• System: ${scanner.name} [Item #${scanner.item}]\n`;
+    text += `• Offer / Promo: ${promo.name} [PO Code: ${promo.code}]\n`;
+    if (promo.kitName) text += `• Kit: ${promo.kitName} (${formatMoney(promo.kitPrice)})\n`;
+    text += `• PC/Hardware: ${document.getElementById('pcSelect').selectedOptions[0].text}\n`;
+    text += `• Invoice Total: ${invoice}\n`;
+    if (rebate) text += `• Mail-In Rebate: ${rebate}\n`;
+    text += `• Net Doctor Price: ${net}\n`;
+
+    if (showDealer) {
+      text += `\n[INTERNAL DEALER DETAILS]\n`;
+      text += `• Reseller PO Cost: ${document.getElementById('outResellerCost').textContent}\n`;
+      text += `• Dealer Gross Profit: ${document.getElementById('outGrossProfit').textContent}\n`;
+    }
+
+    text += `\nIncluded Perks:\n`;
+    text += `+ Free 2-Hour TRIOS Masterclass Onboarding ($500 Value, Code: TRIOSQ3FREE)\n`;
+    text += `+ $1,000 3Shape Lab Credit voucher\n`;
+    text += `+ 1 Year TRIOS Care Warranty & Support\n`;
+    text += `\nOffer valid through September 30, 2026.`;
+
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Quote summary copied to clipboard!");
+    });
+  }
+
+  // Initialize
+  handleScannerChange();
+</script>
+
+</body>
+</html>
