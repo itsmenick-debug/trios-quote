@@ -18,6 +18,7 @@
       --green-bg: #c6f6d5;
       --dealer-blue: #2b6cb0;
       --dealer-bg: #ebf8ff;
+      --trade-badge: #d69e2e;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -34,7 +35,7 @@
     .logo-area h1 { font-size: 1.3rem; color: var(--primary); font-weight: 800; }
     .logo-area span { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-    .section-title { font-size: 1rem; font-weight: 700; color: var(--secondary); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid var(--gray-bg); display: flex; justify-content: space-between; align-items: center; }
+    .section-title { font-size: 0.95rem; font-weight: 700; color: var(--secondary); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid var(--gray-bg); display: flex; justify-content: space-between; align-items: center; }
     .form-group { margin-bottom: 12px; }
     label { display: block; font-size: 0.82rem; font-weight: 600; color: var(--text-dark); margin-bottom: 5px; }
     input[type="text"], input[type="date"], input[type="number"], select { width: 100%; padding: 9px 11px; border: 1px solid var(--gray-border); border-radius: 6px; font-size: 0.9rem; background: #fff; }
@@ -43,6 +44,7 @@
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
     .badge-promo { background: #feebc8; color: #7b341e; }
+    .badge-trade { background: #fefcbf; color: #744210; border: 1px solid #ecc94b; }
 
     /* Switch styling */
     .switch-container { display: flex; align-items: center; justify-content: space-between; background: var(--dealer-bg); border: 1px solid #bee3f8; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; }
@@ -77,7 +79,10 @@
     .dealer-margins-box h4 { color: var(--dealer-blue); margin-bottom: 8px; font-size: 0.9rem; display: flex; justify-content: space-between; border-bottom: 1px solid #bee3f8; padding-bottom: 4px; }
     .dealer-data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.82rem; margin-top: 6px; }
     .dealer-data-grid div span { color: var(--text-muted); display: block; }
-    .dealer-data-grid div strong { color: var(--text-dark); font-size: 0.9rem; }
+    .dealer-data-grid div strong { color: var(--text-dark); font-size: 0.88rem; }
+
+    /* Trade-In Instruction Box */
+    .trade-instructions { background: #fffaf0; border: 1px solid #feebc8; border-radius: 6px; padding: 10px 12px; margin-bottom: 14px; font-size: 0.8rem; color: #7b341e; }
 
     .perks-list { font-size: 0.78rem; color: #4a5568; background: #f0fff4; border: 1px solid #9ae6b4; border-radius: 6px; padding: 10px 12px; margin-bottom: 14px; }
     .perks-list ul { margin-left: 16px; margin-top: 3px; }
@@ -90,7 +95,7 @@
     .btn-outline { background: white; border: 1px solid var(--gray-border); color: var(--text-dark); }
     .btn-outline:hover { background: var(--gray-bg); }
 
-    /* Print styling: clean customer PDF */
+    /* Print styling */
     @media print {
       body { background: white; padding: 0; }
       .app-container { display: block; }
@@ -106,14 +111,14 @@
   <header>
     <div class="logo-area">
       <h1>3Shape TRIOS</h1>
-      <span>Q3 2026 Quote & Cost Builder</span>
+      <span>Q3 2026 Promotions & Trade-Up Quote Builder</span>
     </div>
     <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">
       Valid: July 1 – Sept 30, 2026
     </div>
   </header>
 
-  <!-- Left: Config Controls -->
+  <!-- Left: Controls -->
   <div class="card config-panel">
     <div class="section-title">1. Clinic & Quote Details</div>
     <div class="grid-2">
@@ -137,9 +142,9 @@
       </div>
     </div>
 
-    <div class="section-title">2. Scanner & Quarterly Offer</div>
+    <div class="section-title">2. Target Scanner & Promotion / Trade-Up</div>
     <div class="form-group">
-      <label>Scanner Model</label>
+      <label>Select New TRIOS Scanner</label>
       <select id="scannerSelect" onchange="handleScannerChange()">
         <option value="T6">TRIOS 6 (Standard MSRP: $28,800)</option>
         <option value="T5">TRIOS 5 (Standard MSRP: $26,700)</option>
@@ -148,15 +153,15 @@
     </div>
 
     <div class="form-group">
-      <label>Promotion / Trade / Bundle</label>
+      <label>Promotion / Trade-Up Program</label>
       <select id="promoSelect" onchange="updateQuote()">
-        <!-- Injected via JS -->
+        <!-- Dynamic based on scanner -->
       </select>
     </div>
 
-    <div class="section-title">3. Certified PC / Cart</div>
+    <div class="section-title">3. Certified Hardware / Cart Configuration</div>
     <div class="form-group">
-      <label>Hardware Configuration</label>
+      <label>PC / Mobile Cart Option</label>
       <select id="pcSelect" onchange="updateQuote()">
         <option value="DELL_PRO">Dell Pro Max Plus w/ 3-Yr Support (MSRP: $4,350 | Cost: $4,050)</option>
         <option value="HP_ZBOOK">HP ZBook G11 w/ 3-Yr Warranty (MSRP: $1,850 | Cost: $1,700)</option>
@@ -178,7 +183,7 @@
       </div>
     </div>
 
-    <div class="section-title">5. Internal Cost & Margin Mode</div>
+    <div class="section-title">5. Internal Representative Settings</div>
     <div class="switch-container">
       <span class="switch-label">📊 Show Dealer Costs, PO Breakdown & Margins</span>
       <label class="toggle-switch">
@@ -199,11 +204,11 @@
         </div>
       </div>
       <div style="text-align: right;">
-        <span class="badge badge-promo" id="outPromoCode">PO PROMO CODE: 40122</span>
+        <span class="badge badge-promo" id="outPromoCode">PO CODE: 40122</span>
       </div>
     </div>
 
-    <!-- Dealer Internal Margin Box -->
+    <!-- Dealer Margin Box -->
     <div class="dealer-margins-box" id="dealerBox">
       <h4>
         <span>🔒 CONFIDENTIAL DEALER BREAKDOWN</span>
@@ -223,13 +228,19 @@
           <strong id="outItemCodes" style="font-size:0.75rem;">-</strong>
         </div>
         <div>
-          <span>Required Promotion Code:</span>
+          <span>PO Promotion Code:</span>
           <strong id="outPoCodeBadge" style="color: #c53030;">-</strong>
         </div>
       </div>
     </div>
 
-    <!-- Pricing Breakdown Table -->
+    <!-- Trade-In Pre-approval instructions if trade is active -->
+    <div class="trade-instructions" id="tradeBox" style="display: none;">
+      <strong>🔄 Trade-Up Requirements:</strong>
+      <div id="tradeInstructionsText" style="margin-top: 3px; font-size: 0.75rem; line-height: 1.3;"></div>
+    </div>
+
+    <!-- Table -->
     <table class="pricing-table">
       <thead>
         <tr>
@@ -244,7 +255,7 @@
       </tbody>
     </table>
 
-    <!-- Totals Area -->
+    <!-- Totals -->
     <div class="totals-area">
       <div class="total-row">
         <span>Total List MSRP:</span>
@@ -268,17 +279,17 @@
       </div>
     </div>
 
-    <!-- Value Adds -->
+    <!-- Perks -->
     <div class="perks-list">
       <strong>Included with this configuration:</strong>
       <ul>
         <li><strong>FREE 2-Hour TRIOS Masterclass:</strong> Personalized 1-on-1 virtual training ($500 value, Code: <code>TRIOSQ3FREE</code>).</li>
-        <li><strong>$1,000 3Shape Lab Credit:</strong> Applied directly to preferred lab account via <code>3shape.com/labcredit</code>.</li>
+        <li><strong>$1,000 3Shape Lab Credit:</strong> Applied directly to your lab account via <code>3shape.com/labcredit</code>.</li>
         <li><strong>1st Year TRIOS Care Included:</strong> Comprehensive warranty & support with option to switch to free TRIOS Only plan after Year 1.</li>
       </ul>
     </div>
 
-    <!-- Actions -->
+    <!-- Buttons -->
     <div class="btn-group">
       <button class="btn btn-outline" onclick="copySummary()">📋 Copy Summary</button>
       <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
@@ -287,10 +298,9 @@
 </div>
 
 <script>
-  // Set default date to today
   document.getElementById('quoteDate').valueAsDate = new Date();
 
-  // Pricing Database from 2026 Q3 Confidential Program
+  // Full database with Trade-Up sections and TruAbutment bundles
   const DB = {
     scanners: {
       T6: {
@@ -299,26 +309,39 @@
         listMSRP: 28800,
         standardCost: 20100,
         promos: {
-          STANDARD_REBATE: { 
-            name: "Standard Promo ($1,500 Rebate)", 
+          TRADE_UP_T4: { 
+            name: "🔥 Trade-Up: TRIOS 4 → TRIOS 6 ($4,500 Rebate Check)", 
             code: "40122", 
             promoMSRP: 27900, 
             cost: 18500, 
-            rebate: 1500 
+            rebate: 4500,
+            isTrade: true,
+            tradeDesc: "Upgrade your TRIOS 4 to TRIOS 6. Submit trade pre-approval at 3shape.com/redeem prior to purchase. Return TRIOS 4 to 3Shape within 30 days to receive $4,500 rebate check."
+          },
+          TRADE_IN_COMPETITIVE: { 
+            name: "Trade-In: Competitive Scanner → TRIOS 6 ($4,500 Rebate Check)", 
+            code: "40122", 
+            promoMSRP: 27900, 
+            cost: 18500, 
+            rebate: 4500,
+            isTrade: true,
+            tradeDesc: "Trade competitive scanner (iTero, Medit, Carestream, etc.) for $4,500 rebate check upon return of old device to 3Shape."
+          },
+          STANDARD_REBATE: { 
+            name: "Standard Promotion ($1,500 Rebate Check)", 
+            code: "40122", 
+            promoMSRP: 27900, 
+            cost: 18500, 
+            rebate: 1500,
+            isTrade: false
           },
           ADDITIONAL: { 
-            name: "Additional Scanner Promo (TRIOS/iTero/Primescan)", 
+            name: "Additional Scanner Promo (TRIOS/iTero/Primescan Users)", 
             code: "40123", 
             promoMSRP: 24800, 
             cost: 17800, 
-            rebate: 0 
-          },
-          TRADE_IN: { 
-            name: "Competitive / TRIOS Trade-in ($4,500 Rebate)", 
-            code: "40122", 
-            promoMSRP: 27900, 
-            cost: 18500, 
-            rebate: 4500 
+            rebate: 0,
+            isTrade: false
           },
           IOCONNECT_AOT: { 
             name: "TruAbutment ioConnect AOT Kit Bundle ($1,500 Rebate)", 
@@ -328,7 +351,8 @@
             rebate: 1500,
             kitName: "TruAbutment ioConnect AOT Implant Kit",
             kitPrice: 3000,
-            kitCost: 0
+            kitCost: 0,
+            isTrade: false
           },
           IOCONNECT_STRAUMANN: { 
             name: "TruAbutment ioConnect Straumann Kit Bundle ($1,500 Rebate)", 
@@ -338,7 +362,8 @@
             rebate: 1500,
             kitName: "TruAbutment ioConnect Straumann Implant Kit",
             kitPrice: 4000,
-            kitCost: 0
+            kitCost: 0,
+            isTrade: false
           },
           IOCONNECT_ADDL_AOT: { 
             name: "TruAbutment ioConnect Additional Scanner - AOT Kit", 
@@ -348,7 +373,8 @@
             rebate: 0,
             kitName: "TruAbutment ioConnect AOT Implant Kit",
             kitPrice: 3000,
-            kitCost: 0
+            kitCost: 0,
+            isTrade: false
           },
           IOCONNECT_ADDL_STRAUMANN: { 
             name: "TruAbutment ioConnect Additional Scanner - Straumann Kit", 
@@ -358,7 +384,8 @@
             rebate: 0,
             kitName: "TruAbutment ioConnect Straumann Implant Kit",
             kitPrice: 4000,
-            kitCost: 0
+            kitCost: 0,
+            isTrade: false
           }
         }
       },
@@ -368,19 +395,31 @@
         listMSRP: 26700,
         standardCost: 18700,
         promos: {
-          STANDARD_REBATE: { 
-            name: "Grow with TRIOS 5 ($1,000 Rebate)", 
+          TRADE_UP_T3: { 
+            name: "🔥 Trade-Up: TRIOS 3 → TRIOS 5 ($3,500 Rebate Check + $6,500 Off)", 
             code: "40119", 
             promoMSRP: 20200, 
             cost: 13700, 
-            rebate: 1000 
+            rebate: 3500,
+            isTrade: true,
+            tradeDesc: "Upgrade your TRIOS 3 to TRIOS 5. Upfront discount of $6,500 applied at invoice. Submit trade pre-approval at 3shape.com/redeem and return old TRIOS 3 to receive $3,500 rebate check."
           },
-          TRADE_IN: { 
-            name: "Competitive / TRIOS Trade-in ($3,500 Rebate)", 
+          TRADE_IN_COMPETITIVE: { 
+            name: "Trade-In: Competitive Scanner → TRIOS 5 ($3,500 Rebate Check)", 
             code: "40119", 
             promoMSRP: 20200, 
             cost: 13700, 
-            rebate: 3500 
+            rebate: 3500,
+            isTrade: true,
+            tradeDesc: "Trade competitive scanner for $3,500 rebate check upon return of old device to 3Shape."
+          },
+          STANDARD_REBATE: { 
+            name: "Grow with TRIOS 5 ($1,000 Rebate Check + $6,500 Off)", 
+            code: "40119", 
+            promoMSRP: 20200, 
+            cost: 13700, 
+            rebate: 1000,
+            isTrade: false
           },
           IOCONNECT_AOT: { 
             name: "TruAbutment ioConnect AOT Kit Bundle ($1,000 Rebate)", 
@@ -390,7 +429,8 @@
             rebate: 1000,
             kitName: "TruAbutment ioConnect AOT Implant Kit",
             kitPrice: 3000,
-            kitCost: 0
+            kitCost: 0,
+            isTrade: false
           },
           IOCONNECT_STRAUMANN: { 
             name: "TruAbutment ioConnect Straumann Kit Bundle ($1,000 Rebate)", 
@@ -400,7 +440,8 @@
             rebate: 1000,
             kitName: "TruAbutment ioConnect Straumann Implant Kit",
             kitPrice: 4000,
-            kitCost: 0
+            kitCost: 0,
+            isTrade: false
           }
         }
       },
@@ -415,7 +456,8 @@
             code: "40120", 
             promoMSRP: 10550, 
             cost: 6400, 
-            rebate: 0 
+            rebate: 0,
+            isTrade: false
           }
         }
       }
@@ -425,7 +467,7 @@
       HP_ZBOOK: { name: 'HP ZBook G11 Laptop (3-Yr Warranty)', item: '20000250', msrp: 1850, cost: 1700 },
       MOVE_PLUS: { name: 'TRIOS MOVE+ Standalone Cart', item: '22002375', msrp: 7200, cost: 6100 },
       MOVE_PRO: { name: 'TRIOS MOVE Pro Standalone Cart', item: '22003210', msrp: 8000, cost: 6800 },
-      NONE: { name: 'No PC / Client Existing Hardware', item: '-', msrp: 0, cost: 0 }
+      NONE: { name: 'No PC / Existing Approved Hardware', item: '-', msrp: 0, cost: 0 }
     },
     readyTips: {
       item: '10036057',
@@ -466,7 +508,6 @@
     const customDiscount = parseFloat(document.getElementById('customDiscount').value) || 0;
     const showDealer = document.getElementById('showDealerMargins').checked;
 
-    // Header info
     document.getElementById('outDrName').textContent = drName;
     document.getElementById('outPractice').textContent = practice;
     document.getElementById('outDate').textContent = quoteDate ? new Date(quoteDate).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}) : '';
@@ -478,7 +519,16 @@
     document.getElementById('outPromoCode').textContent = `PO PROMO CODE: ${promoData.code}`;
     document.getElementById('outPoCodeBadge').textContent = promoData.code;
 
-    // Itemized calculation
+    // Trade Instructions Box
+    const tradeBox = document.getElementById('tradeBox');
+    if (promoData.isTrade) {
+      tradeBox.style.display = 'block';
+      document.getElementById('tradeInstructionsText').textContent = promoData.tradeDesc;
+    } else {
+      tradeBox.style.display = 'none';
+    }
+
+    // Calculations
     let tbody = '';
     let totalList = scannerData.listMSRP + pcData.msrp;
     let invoiceTotal = promoData.promoMSRP + pcData.msrp - customDiscount;
@@ -491,14 +541,14 @@
     // 1. Scanner row
     tbody += `
       <tr>
-        <td><strong>${scannerData.name}</strong><br><small style="color:var(--text-muted);">${promoData.name} (Item #${scannerData.item})</small></td>
+        <td><strong>${scannerData.name}</strong><br><small style="color:var(--text-muted);">${promoData.name}</small></td>
         ${costCell(promoData.cost)}
         <td class="num">${formatMoney(scannerData.listMSRP)}</td>
         <td class="num"><strong>${formatMoney(promoData.promoMSRP)}</strong></td>
       </tr>
     `;
 
-    // 2. Hardware / PC row
+    // 2. PC row
     if (pcKey !== 'NONE') {
       tbody += `
         <tr>
@@ -510,7 +560,7 @@
       `;
     }
 
-    // 3. TruAbutment ioConnect Kit (if included)
+    // 3. TruAbutment ioConnect Kit
     if (promoData.kitName) {
       totalList += promoData.kitPrice;
       invoiceTotal += promoData.kitPrice;
@@ -611,23 +661,28 @@
 
     let text = `3Shape TRIOS Quote Summary for ${dr} (${practice})\n`;
     text += `--------------------------------------------------\n`;
-    text += `• System: ${scanner.name} [Item #${scanner.item}]\n`;
-    text += `• Offer / Promo: ${promo.name} [PO Code: ${promo.code}]\n`;
-    if (promo.kitName) text += `• Kit: ${promo.kitName} (${formatMoney(promo.kitPrice)})\n`;
-    text += `• PC/Hardware: ${document.getElementById('pcSelect').selectedOptions[0].text}\n`;
-    text += `• Invoice Total: ${invoice}\n`;
-    if (rebate) text += `• Mail-In Rebate: ${rebate}\n`;
-    text += `• Net Doctor Price: ${net}\n`;
+    text += `• Selected System: ${scanner.name} [Item #${scanner.item}]\n`;
+    text += `• Program / Promotion: ${promo.name}\n`;
+    text += `• 3Shape PO Promo Code: ${promo.code}\n`;
+    if (promo.kitName) text += `• Included Kit: ${promo.kitName} (${formatMoney(promo.kitPrice)})\n`;
+    text += `• Hardware: ${document.getElementById('pcSelect').selectedOptions[0].text}\n`;
+    text += `• Invoice Purchase Price: ${invoice}\n`;
+    if (rebate) text += `• Mail-In Rebate Check: ${rebate}\n`;
+    text += `• Net Doctor Investment: ${net}\n`;
+
+    if (promo.isTrade) {
+      text += `\nTrade-In Notice: ${promo.tradeDesc}\n`;
+    }
 
     if (showDealer) {
-      text += `\n[INTERNAL DEALER DETAILS]\n`;
-      text += `• Reseller PO Cost: ${document.getElementById('outResellerCost').textContent}\n`;
-      text += `• Dealer Gross Profit: ${document.getElementById('outGrossProfit').textContent}\n`;
+      text += `\n[INTERNAL DEALER BREAKDOWN]\n`;
+      text += `• Total Reseller Cost: ${document.getElementById('outResellerCost').textContent}\n`;
+      text += `• Gross Dealer Profit: ${document.getElementById('outGrossProfit').textContent}\n`;
     }
 
     text += `\nIncluded Perks:\n`;
     text += `+ Free 2-Hour TRIOS Masterclass Onboarding ($500 Value, Code: TRIOSQ3FREE)\n`;
-    text += `+ $1,000 3Shape Lab Credit voucher\n`;
+    text += `+ $1,000 3Shape Lab Credit voucher (claim at 3shape.com/labcredit)\n`;
     text += `+ 1 Year TRIOS Care Warranty & Support\n`;
     text += `\nOffer valid through September 30, 2026.`;
 
