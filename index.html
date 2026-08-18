@@ -94,16 +94,37 @@
     .btn-outline { background: white; border: 1px solid var(--gray-border); color: var(--text-dark); }
     .btn-outline:hover { background: var(--gray-bg); }
 
+    /* Dynamic Print Styling */
     @media print {
       body { background: white; padding: 0; }
       .app-container { display: block; }
-      .config-panel, header, .btn-group, .switch-container, .dealer-margins-box, .dealer-col, th.dealer-col { display: none !important; }
+      .config-panel, header, .btn-group, .switch-container { display: none !important; }
       .quote-preview { border: none; box-shadow: none; padding: 0; position: static; }
       .card { box-shadow: none; border: none; padding: 0; }
+
+      /* When Dealer Toggle is OFF: strictly hide dealer items */
+      body.dealer-off .dealer-margins-box,
+      body.dealer-off .dealer-col,
+      body.dealer-off th.dealer-col { 
+        display: none !important; 
+      }
+
+      /* When Dealer Toggle is ON: print dealer margins and cost column with exact colors */
+      body.dealer-on .dealer-margins-box { 
+        display: block !important; 
+        -webkit-print-color-adjust: exact; 
+        print-color-adjust: exact;
+      }
+      body.dealer-on .dealer-col,
+      body.dealer-on th.dealer-col { 
+        display: table-cell !important; 
+        -webkit-print-color-adjust: exact; 
+        print-color-adjust: exact;
+      }
     }
   </style>
 </head>
-<body>
+<body class="dealer-on">
 
 <div class="app-container">
   <header>
@@ -524,6 +545,15 @@
     const customDiscount = parseFloat(document.getElementById('customDiscount').value) || 0;
     const showDealer = document.getElementById('showDealerMargins').checked;
 
+    // Toggle body class for dynamic printing behavior
+    if (showDealer) {
+      document.body.classList.add('dealer-on');
+      document.body.classList.remove('dealer-off');
+    } else {
+      document.body.classList.add('dealer-off');
+      document.body.classList.remove('dealer-on');
+    }
+
     document.getElementById('outDrName').textContent = drName;
     document.getElementById('outPractice').textContent = practice;
     document.getElementById('outDate').textContent = quoteDate ? new Date(quoteDate).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}) : '';
@@ -549,7 +579,7 @@
       tradeBox.style.display = 'none';
     }
 
-    // Calculations for both Standard MSRP and Promotional Retail
+    // Line-item calculations
     let tbody = '';
     let totalStandardList = scannerData.standardMSRP + pcData.standardMSRP;
     let totalPromoRetail = promoData.promoMSRP + pcData.promoMSRP;
@@ -557,9 +587,9 @@
     let itemCodesList = [scannerData.item];
     if (pcData.item !== '-') itemCodesList.push(pcData.item);
 
-    const costCell = (costVal) => showDealer ? `<td class="num dealer-col">${formatMoney(costVal)}</td>` : '';
+    const costCell = (costVal) => `<td class="num dealer-col">${formatMoney(costVal)}</td>`;
 
-    // 1. Scanner row (Displays Item #, Standard MSRP and Promo Retail)
+    // 1. Scanner row
     tbody += `
       <tr>
         <td>
@@ -633,7 +663,7 @@
       tbody += `
         <tr>
           <td><strong style="color: #c53030;">Dealer Additional Adjustment</strong></td>
-          ${showDealer ? `<td class="num dealer-col">-</td>` : ''}
+          <td class="num dealer-col">-</td>
           <td class="num">-</td>
           <td class="num" style="color: #c53030;"><strong>-${formatMoney(customDiscount)}</strong></td>
         </tr>
@@ -642,9 +672,11 @@
 
     document.getElementById('pricingBody').innerHTML = tbody;
 
-    // Toggle table header for Dealer Cost column
+    // Toggle table header & column displays for on-screen view
     const dealerHeaders = document.querySelectorAll('th.dealer-col');
+    const dealerCells = document.querySelectorAll('td.dealer-col');
     dealerHeaders.forEach(th => th.style.display = showDealer ? 'table-cell' : 'none');
+    dealerCells.forEach(td => td.style.display = showDealer ? 'table-cell' : 'none');
 
     // Totals
     const invoiceTotal = totalPromoRetail - customDiscount;
@@ -654,7 +686,7 @@
 
     document.getElementById('outStandardSubtotal').textContent = formatMoney(totalStandardList);
     
-    // Upfront Discount Row Handling
+    // Upfront Savings Row
     const upfrontRow = document.getElementById('upfrontDiscountRow');
     if (upfrontSavings > 0) {
       upfrontRow.style.display = 'flex';
