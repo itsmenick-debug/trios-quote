@@ -94,7 +94,6 @@
     .btn-outline { background: white; border: 1px solid var(--gray-border); color: var(--text-dark); }
     .btn-outline:hover { background: var(--gray-bg); }
 
-    /* Dynamic Print Styling */
     @media print {
       body { background: white; padding: 0; }
       .app-container { display: block; }
@@ -102,14 +101,14 @@
       .quote-preview { border: none; box-shadow: none; padding: 0; position: static; }
       .card { box-shadow: none; border: none; padding: 0; }
 
-      /* When Dealer Toggle is OFF: strictly hide dealer items */
+      /* When Dealer Toggle is OFF: hide dealer items */
       body.dealer-off .dealer-margins-box,
       body.dealer-off .dealer-col,
       body.dealer-off th.dealer-col { 
         display: none !important; 
       }
 
-      /* When Dealer Toggle is ON: print dealer margins and cost column with exact colors */
+      /* When Dealer Toggle is ON: print dealer margins and cost column */
       body.dealer-on .dealer-margins-box { 
         display: block !important; 
         -webkit-print-color-adjust: exact; 
@@ -216,7 +215,7 @@
   <div class="card quote-preview" id="quoteCard">
     <div class="quote-header">
       <div>
-        <h2 style="color: var(--primary); font-size: 1.25rem;">TRIOS Quote & Proposal</h2>
+        <h2 style="color: var(--primary); font-size: 1.25rem;">Trios - What to Quote</h2>
         <div class="quote-client-details" style="margin-top: 3px;">
           Prepared for: <strong id="outDrName">Dr. Smith</strong> | <span id="outPractice">Elite Dental Care</span><br>
           Date: <span id="outDate"></span> | Valid thru: Sept 30, 2026
@@ -259,7 +258,7 @@
       <div id="tradeInstructionsText" style="margin-top: 4px; line-height: 1.4;"></div>
     </div>
 
-    <!-- Pricing Table with Normal MSRP and Promo Retail columns -->
+    <!-- Pricing Table -->
     <table class="pricing-table">
       <thead>
         <tr>
@@ -319,7 +318,7 @@
 <script>
   document.getElementById('quoteDate').valueAsDate = new Date();
 
-  // Confidential Q3 2026 verified database
+  // Database with Standard MSRP, Promo MSRP, and Dealer Costs
   const DB = {
     scanners: {
       T6: {
@@ -545,7 +544,6 @@
     const customDiscount = parseFloat(document.getElementById('customDiscount').value) || 0;
     const showDealer = document.getElementById('showDealerMargins').checked;
 
-    // Toggle body class for dynamic printing behavior
     if (showDealer) {
       document.body.classList.add('dealer-on');
       document.body.classList.remove('dealer-off');
@@ -736,7 +734,7 @@
     const net = document.getElementById('outNetPrice').textContent;
     const showDealer = document.getElementById('showDealerMargins').checked;
 
-    let text = `3Shape TRIOS Quote Summary for ${dr} (${practice})\n`;
+    let text = `3Shape Trios - What to Quote Summary for ${dr} (${practice})\n`;
     text += `--------------------------------------------------\n`;
     text += `• Selected System: ${scanner.name} [Item #${scanner.item}]\n`;
     text += `• Program / Promotion: ${promo.name}\n`;
