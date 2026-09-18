@@ -36,6 +36,21 @@
     .logo-area h1 { font-size: 1.3rem; color: var(--primary); font-weight: 800; }
     .logo-area span { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
+    /* Voice Control Header Bar */
+    .voice-control-bar { display: flex; align-items: center; gap: 12px; }
+    .btn-mic { background: var(--gray-bg); border: 2px solid var(--gray-border); padding: 8px 14px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; color: var(--text-dark); }
+    .btn-mic:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-mic.listening { background: #fff5f5; border-color: var(--primary); color: var(--primary); animation: pulse 1.5s infinite; }
+    
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(200, 16, 46, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(200, 16, 46, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(200, 16, 46, 0); }
+    }
+
+    .voice-transcript-banner { grid-column: 1 / -1; background: #2d3748; color: #fff; padding: 8px 16px; border-radius: 8px; font-size: 0.82rem; display: none; align-items: center; justify-content: space-between; }
+    .voice-transcript-banner span strong { color: #63b3ed; }
+
     /* Mode Navigation Tabs */
     .tab-bar { grid-column: 1 / -1; display: flex; gap: 10px; background: white; padding: 8px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
     .tab-btn { flex: 1; padding: 10px 14px; border: 2px solid transparent; background: #edf2f7; border-radius: 8px; font-weight: 700; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; transition: all 0.2s; text-align: center; }
@@ -106,7 +121,7 @@
     @media print {
       body { background: white; padding: 0; }
       .app-container { display: block; }
-      .config-panel, header, .tab-bar, .btn-group, .switch-container { display: none !important; }
+      .config-panel, header, .tab-bar, .btn-group, .switch-container, .voice-transcript-banner { display: none !important; }
       .quote-preview { border: none; box-shadow: none; padding: 0; position: static; }
       .card { box-shadow: none; border: none; padding: 0; }
 
@@ -138,10 +153,19 @@
       <h1>3Shape TRIOS</h1>
       <span id="headerSubtext">Quote & Workflow Configurator</span>
     </div>
-    <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">
-      Valid 2026
+    <div class="voice-control-bar">
+      <button class="btn-mic" id="voiceBtn" onclick="toggleVoice()">
+        <span id="micIcon">🎙️</span> <span id="micLabel">Voice Assistant</span>
+      </button>
+      <div style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">Valid 2026</div>
     </div>
   </header>
+
+  <!-- Live Voice Feedback Bar -->
+  <div class="voice-transcript-banner" id="voiceBanner">
+    <span>Listening... Heard: <strong id="voiceHeardText">"..."</strong></span>
+    <small style="cursor: pointer; text-decoration: underline;" onclick="toggleVoice()">Stop</small>
+  </div>
 
   <!-- Mode Selector Tabs -->
   <div class="tab-bar">
@@ -160,7 +184,7 @@
       </div>
       <div class="form-group">
         <label>Account / Institution Name</label>
-        <input type="text" id="practiceName" placeholder="Dental School / Residency Clinic" value="University Dental School" oninput="updateQuote()">
+        <input type="text" id="practiceName" placeholder="Elite Dental Care" value="Elite Dental Care" oninput="updateQuote()">
       </div>
     </div>
     <div class="grid-2">
@@ -251,7 +275,8 @@
         <label>Computer</label>
         <select id="eduPcSelect" onchange="updateQuote()">
           <option value="EDU_MOVE_PRO">Move Pro — Item #22003210 (MSRP: $8,000 | Wholesale: $6,800)</option>
-          <option value="EDU_DELL_PRO">Dell Pro Max Plus w 3-Year Support — Item #20000255 (MSRP: $4,350 | Wholesale: $4,050)</option>
+          <option value="EDU_DELL_PRO">Dell Pro Max Plus with 3-Year Support — Item #20000255 (MSRP: $4,350 | Wholesale: $4,050)</option>
+          <option value="EDU_LENOVO_P360">Lenovo Thinkstation P360 Ultra — Item #20000127 (MSRP: $3,190 | Wholesale: $2,670)</option>
           <option value="EDU_MOVE_PLUS">Move+ — Item #22002375 (MSRP: $7,000 | Wholesale: $5,900)</option>
           <option value="EDU_HP_ZBOOK">HP ZBook G11 (3-Year Warranty) — Item #20000250 (MSRP: $1,850 | Wholesale: $1,700)</option>
           <option value="NONE">No Computer / Client Existing Hardware ($0)</option>
@@ -287,7 +312,7 @@
       <div>
         <h2 style="color: var(--primary); font-size: 1.25rem;">Trios - What to Quote</h2>
         <div class="quote-client-details" style="margin-top: 3px;">
-          Prepared for: <strong id="outDrName">Dr. Smith</strong> | <span id="outPractice">University Dental School</span><br>
+          Prepared for: <strong id="outDrName">Dr. Smith</strong> | <span id="outPractice">Elite Dental Care</span><br>
           Date: <span id="outDate"></span> | <span id="outValidity">Valid thru: Sept 30, 2026</span>
         </div>
       </div>
@@ -410,7 +435,7 @@
     updateQuote();
   }
 
-  // Database containing Commercial, Government / CHC, and Educational (EDU) structures
+  // Database
   const DB = {
     commercial: {
       scanners: {
@@ -602,71 +627,17 @@
     },
     gov: {
       scanners: {
-        GOV_T6: {
-          name: "TRIOS 6 Intraoral Scanner",
-          item: "22003200",
-          standardMSRP: 28800,
-          govMSRP: 26400,
-          cost: 18500
-        },
-        GOV_T5: {
-          name: "TRIOS 5 Intraoral Scanner",
-          item: "22004025",
-          standardMSRP: 26700,
-          govMSRP: 19200,
-          cost: 13700
-        },
-        GOV_T3: {
-          name: "TRIOS 3 (Value Promotion)",
-          item: "22004000",
-          standardMSRP: 18000,
-          govMSRP: 10550,
-          cost: 6400
-        }
+        GOV_T6: { name: "TRIOS 6 Intraoral Scanner", item: "22003200", standardMSRP: 28800, govMSRP: 26400, cost: 18500 },
+        GOV_T5: { name: "TRIOS 5 Intraoral Scanner", item: "22004025", standardMSRP: 26700, govMSRP: 19200, cost: 13700 },
+        GOV_T3: { name: "TRIOS 3 (Value Promotion)", item: "22004000", standardMSRP: 18000, govMSRP: 10550, cost: 6400 }
       },
       computers: {
-        GOV_MOVE_PRO: {
-          name: "Move Pro Cart",
-          item: "22003210",
-          standardMSRP: 8000,
-          govMSRP: 8000,
-          cost: 6800
-        },
-        GOV_DELL_PRO: {
-          name: "Dell Pro Max Plus w 3-Year Support",
-          item: "20000255",
-          standardMSRP: 4850,
-          govMSRP: 4850,
-          cost: 4500
-        },
-        GOV_LENOVO_P360: {
-          name: "Lenovo Thinkstation P360 Ultra",
-          item: "20000127",
-          standardMSRP: 3190,
-          govMSRP: 3190,
-          cost: 2670
-        },
-        GOV_MOVE_PLUS: {
-          name: "Move+ Cart",
-          item: "22002375",
-          standardMSRP: 7000,
-          govMSRP: 7000,
-          cost: 5900
-        },
-        GOV_HP_ZBOOK: {
-          name: "HP ZBook G11 Laptop",
-          item: "20000250",
-          standardMSRP: 1850,
-          govMSRP: 1850,
-          cost: 1700
-        },
-        NONE: {
-          name: "No Computer / Client Existing Approved Hardware",
-          item: "-",
-          standardMSRP: 0,
-          govMSRP: 0,
-          cost: 0
-        }
+        GOV_MOVE_PRO: { name: "Move Pro Cart", item: "22003210", standardMSRP: 8000, govMSRP: 8000, cost: 6800 },
+        GOV_DELL_PRO: { name: "Dell Pro Max Plus w 3-Year Support", item: "20000255", standardMSRP: 4850, govMSRP: 4850, cost: 4500 },
+        GOV_LENOVO_P360: { name: "Lenovo Thinkstation P360 Ultra", item: "20000127", standardMSRP: 3190, govMSRP: 3190, cost: 2670 },
+        GOV_MOVE_PLUS: { name: "Move+ Cart", item: "22002375", standardMSRP: 7000, govMSRP: 7000, cost: 5900 },
+        GOV_HP_ZBOOK: { name: "HP ZBook G11 Laptop", item: "20000250", standardMSRP: 1850, govMSRP: 1850, cost: 1700 },
+        NONE: { name: "No Computer / Client Existing Approved Hardware", item: "-", standardMSRP: 0, govMSRP: 0, cost: 0 }
       },
       coverage: {
         name: "TRIOS Care Corporate – 4 renewals (1st year free)",
@@ -679,75 +650,18 @@
     },
     edu: {
       scanners: {
-        EDU_T6: {
-          name: "TRIOS 6",
-          item: "22003203",
-          standardMSRP: 28800,
-          eduMSRP: 22300,
-          cost: 15600,
-          desc: "Educational Pricing Reference (Universities & Residency Programs)"
-        },
-        EDU_T5: {
-          name: "TRIOS 5 EDU",
-          item: "22004028",
-          standardMSRP: 26700,
-          eduMSRP: 19600,
-          cost: 14500,
-          desc: "Educational Pricing Reference (Universities & Residency Programs)"
-        },
-        EDU_T3: {
-          name: "TRIOS 3 Refresh EDU",
-          item: "22004004",
-          standardMSRP: 18000,
-          eduMSRP: 13900,
-          cost: 9200,
-          desc: "Educational Pricing Reference (Universities & Residency Programs)"
-        },
-        EDU_CORE: {
-          name: "TRIOS Core EDU",
-          item: "22004014",
-          standardMSRP: 12000,
-          eduMSRP: 9900,
-          cost: 7000,
-          desc: "Educational Pricing Reference (Universities & Residency Programs)"
-        }
+        EDU_T6: { name: "TRIOS 6", item: "22003203", standardMSRP: 28800, eduMSRP: 22300, cost: 15600, desc: "Educational Pricing Reference (Universities & Residency Programs)" },
+        EDU_T5: { name: "TRIOS 5 EDU", item: "22004028", standardMSRP: 26700, eduMSRP: 19600, cost: 14500, desc: "Educational Pricing Reference (Universities & Residency Programs)" },
+        EDU_T3: { name: "TRIOS 3 Refresh EDU", item: "22004004", standardMSRP: 18000, eduMSRP: 13900, cost: 9200, desc: "Educational Pricing Reference (Universities & Residency Programs)" },
+        EDU_CORE: { name: "TRIOS Core EDU", item: "22004014", standardMSRP: 12000, eduMSRP: 9900, cost: 7000, desc: "Educational Pricing Reference (Universities & Residency Programs)" }
       },
       computers: {
-        EDU_MOVE_PRO: {
-          name: "Move Pro Cart",
-          item: "22003210",
-          standardMSRP: 8000,
-          eduMSRP: 8000,
-          cost: 6800
-        },
-        EDU_DELL_PRO: {
-          name: "Dell Pro Max Plus with 3-Year Support",
-          item: "20000255",
-          standardMSRP: 4350,
-          eduMSRP: 4350,
-          cost: 4050
-        },
-        EDU_MOVE_PLUS: {
-          name: "Move+ Cart",
-          item: "22002375",
-          standardMSRP: 7000,
-          eduMSRP: 7000,
-          cost: 5900
-        },
-        EDU_HP_ZBOOK: {
-          name: "HP ZBook G11 (3-Year Warranty)",
-          item: "20000250",
-          standardMSRP: 1850,
-          eduMSRP: 1850,
-          cost: 1700
-        },
-        NONE: {
-          name: "No Computer / Client Existing Approved Hardware",
-          item: "-",
-          standardMSRP: 0,
-          eduMSRP: 0,
-          cost: 0
-        }
+        EDU_MOVE_PRO: { name: "Move Pro Cart", item: "22003210", standardMSRP: 8000, eduMSRP: 8000, cost: 6800 },
+        EDU_DELL_PRO: { name: "Dell Pro Max Plus with 3-Year Support", item: "20000255", standardMSRP: 4350, eduMSRP: 4350, cost: 4050 },
+        EDU_LENOVO_P360: { name: "Lenovo Thinkstation P360 Ultra", item: "20000127", standardMSRP: 3190, eduMSRP: 3190, cost: 2670 },
+        EDU_MOVE_PLUS: { name: "Move+ Cart", item: "22002375", standardMSRP: 7000, eduMSRP: 7000, cost: 5900 },
+        EDU_HP_ZBOOK: { name: "HP ZBook G11 (3-Year Warranty)", item: "20000250", standardMSRP: 1850, eduMSRP: 1850, cost: 1700 },
+        NONE: { name: "No Computer / Client Existing Approved Hardware", item: "-", standardMSRP: 0, eduMSRP: 0, cost: 0 }
       },
       warranty: {
         name: "TRIOS Educational 2-Year Extended Warranty",
@@ -849,7 +763,7 @@
       itemCodesList.push(scannerData.item);
       if (pcData.item !== '-') itemCodesList.push(pcData.item);
 
-      // 1. Scanner row
+      // Scanner row
       tbody += `
         <tr>
           <td>
@@ -863,7 +777,7 @@
         </tr>
       `;
 
-      // 2. Hardware / PC row
+      // PC row
       if (pcKey !== 'NONE') {
         tbody += `
           <tr>
@@ -878,7 +792,7 @@
         `;
       }
 
-      // 3. TruAbutment ioConnect Kit
+      // TruAbutment ioConnect Kit
       if (promoData.kitName) {
         totalStandardList += (promoData.kitStandardMSRP || promoData.kitPrice);
         totalSellingPrice += promoData.kitPrice;
@@ -905,7 +819,6 @@
       document.getElementById('lblNetPrice').textContent = "Doctor Net Investment (After Rebate):";
 
     } else if (currentMode === 'gov') {
-      // GOVERNMENT / CHC PRICING MODE
       const govScannerKey = document.getElementById('govScannerSelect').value;
       const govPcKey = document.getElementById('govPcSelect').value;
 
@@ -997,7 +910,6 @@
       document.getElementById('outPoCodeBadge').textContent = "EDUCATIONAL CONTRACT";
       document.getElementById('tradeBox').style.display = 'none';
 
-      // 1. Scanner
       totalStandardList += scannerData.standardMSRP;
       totalSellingPrice += scannerData.eduMSRP;
       totalCost += scannerData.cost;
@@ -1016,7 +928,6 @@
         </tr>
       `;
 
-      // 2. Computer (if chosen)
       if (eduPcKey !== 'NONE') {
         totalStandardList += pcData.standardMSRP;
         totalSellingPrice += pcData.eduMSRP;
@@ -1036,7 +947,7 @@
         `;
       }
 
-      // 3. Extended Warranty (Always appears on EDU quotes)
+      // Mandatory 2-Year Extended Warranty
       totalStandardList += warrantyData.standardMSRP;
       totalSellingPrice += warrantyData.eduMSRP;
       totalCost += warrantyData.cost;
@@ -1208,6 +1119,211 @@
     navigator.clipboard.writeText(text).then(() => {
       alert("Quote summary copied to clipboard!");
     });
+  }
+
+  /* =======================================================
+     VOICE ACTIVATION ENGINE (Web Speech API)
+     ======================================================= */
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  let recognition = null;
+  let isListening = false;
+
+  if (SpeechRecognition) {
+    recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onresult = function(event) {
+      const lastResult = event.results[event.results.length - 1];
+      if (lastResult.isFinal) {
+        const transcript = lastResult[0].transcript.trim();
+        document.getElementById('voiceHeardText').textContent = `"${transcript}"`;
+        parseVoiceCommand(transcript.toLowerCase());
+      }
+    };
+
+    recognition.onerror = function(event) {
+      console.warn("Speech recognition error: ", event.error);
+      if (event.error === 'not-allowed') {
+        alert("Microphone permission denied. Please allow microphone access in your browser address bar.");
+        stopListening();
+      }
+    };
+
+    recognition.onend = function() {
+      if (isListening) {
+        // Keep listening unless stopped by user
+        try { recognition.start(); } catch(e){}
+      }
+    };
+  }
+
+  function toggleVoice() {
+    if (!SpeechRecognition) {
+      alert("Speech recognition is not supported in this browser. Please open in Chrome, Edge, or Safari on iOS.");
+      return;
+    }
+
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  }
+
+  function startListening() {
+    isListening = true;
+    try {
+      recognition.start();
+      document.getElementById('voiceBtn').classList.add('listening');
+      document.getElementById('micLabel').textContent = "Listening...";
+      document.getElementById('voiceBanner').style.display = 'flex';
+      document.getElementById('voiceHeardText').textContent = "Say a command (e.g., 'Doctor Smith', 'TRIOS 6', 'Dell Pro')...";
+    } catch(e) {
+      console.error(e);
+    }
+  }
+
+  function stopListening() {
+    isListening = false;
+    try { recognition.stop(); } catch(e){}
+    document.getElementById('voiceBtn').classList.remove('listening');
+    document.getElementById('micLabel').textContent = "Voice Assistant";
+    document.getElementById('voiceBanner').style.display = 'none';
+  }
+
+  // Voice Command Intent Parser
+  function parseVoiceCommand(text) {
+    // 1. Mode Switching
+    if (text.includes("government") || text.includes("chc") || text.includes("va facility")) {
+      setMode('gov');
+    } else if (text.includes("education") || text.includes("university") || text.includes("dental school") || text.includes("edu")) {
+      setMode('edu');
+    } else if (text.includes("commercial") || text.includes("standard") || text.includes("promotional")) {
+      setMode('commercial');
+    }
+
+    // 2. Doctor Name ("Doctor Jane Smith", "Dr. Smith")
+    const docMatch = text.match(/(?:doctor|dr\.?)\s+([a-z\s]+?)(?=\s+(?:practice|clinic|office|rep|trios|scanner|dell|hp|move|quote|discount|tips)|$)/i);
+    if (docMatch && docMatch[1]) {
+      const cleanName = docMatch[1].trim();
+      if (!cleanName.startsWith("is ")) {
+        document.getElementById('drName').value = "Dr. " + cleanName.replace(/^is\s+/i, '').replace(/\b\w/g, c => c.toUpperCase());
+      }
+    }
+
+    // 3. Practice / Clinic Name ("Practice Apex Dental", "Clinic Downtown Health")
+    const practiceMatch = text.match(/(?:practice|clinic|office|account)\s+(?:is\s+)?([a-z0-9\s]+?)(?=\s+(?:doctor|dr|rep|trios|scanner|quote|discount|tips)|$)/i);
+    if (practiceMatch && practiceMatch[1]) {
+      document.getElementById('practiceName').value = practiceMatch[1].trim().replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    // 4. Sales Rep Name ("Rep Nick Hall", "Representative Jane")
+    const repMatch = text.match(/(?:rep|representative)\s+(?:is\s+)?([a-z\s]+?)(?=\s+(?:doctor|practice|clinic|scanner|quote)|$)/i);
+    if (repMatch && repMatch[1]) {
+      document.getElementById('repName').value = repMatch[1].trim().replace(/\b\w/g, c => c.toUpperCase());
+    }
+
+    // 5. Scanner Selections
+    if (currentMode === 'commercial') {
+      if (text.includes("trios 6") || text.includes("t6")) {
+        document.getElementById('scannerSelect').value = "T6";
+        handleScannerChange();
+      } else if (text.includes("trios 5") || text.includes("t5")) {
+        document.getElementById('scannerSelect').value = "T5";
+        handleScannerChange();
+      } else if (text.includes("trios 3") || text.includes("t3")) {
+        document.getElementById('scannerSelect').value = "T3";
+        handleScannerChange();
+      }
+
+      // Promotions / Trade-Up Selection
+      const promoSelect = document.getElementById('promoSelect');
+      if (text.includes("back to school") || text.includes("school")) {
+        selectOptionByPartialText(promoSelect, "Back to School");
+      } else if (text.includes("competitive") || text.includes("trade-in") || text.includes("trade in")) {
+        selectOptionByPartialText(promoSelect, "Competitive");
+      } else if (text.includes("straumann")) {
+        selectOptionByPartialText(promoSelect, "Straumann");
+      } else if (text.includes("aot")) {
+        selectOptionByPartialText(promoSelect, "AOT");
+      } else if (text.includes("additional")) {
+        selectOptionByPartialText(promoSelect, "Additional");
+      } else if (text.includes("standard")) {
+        selectOptionByPartialText(promoSelect, "Standard");
+      }
+    } else if (currentMode === 'gov') {
+      const govScanner = document.getElementById('govScannerSelect');
+      if (text.includes("trios 6") || text.includes("t6")) govScanner.value = "GOV_T6";
+      else if (text.includes("trios 5") || text.includes("t5")) govScanner.value = "GOV_T5";
+      else if (text.includes("trios 3") || text.includes("t3")) govScanner.value = "GOV_T3";
+    } else if (currentMode === 'edu') {
+      const eduScanner = document.getElementById('eduScannerSelect');
+      if (text.includes("trios 6") || text.includes("t6")) eduScanner.value = "EDU_T6";
+      else if (text.includes("trios 5") || text.includes("t5")) eduScanner.value = "EDU_T5";
+      else if (text.includes("trios 3") || text.includes("t3")) eduScanner.value = "EDU_T3";
+      else if (text.includes("core")) eduScanner.value = "EDU_CORE";
+    }
+
+    // 6. Computer / Hardware Selections
+    const pcDropdown = currentMode === 'commercial' ? document.getElementById('pcSelect') : (currentMode === 'gov' ? document.getElementById('govPcSelect') : document.getElementById('eduPcSelect'));
+    
+    if (text.includes("dell") || text.includes("pro max") || text.includes("precision")) {
+      selectOptionByPartialText(pcDropdown, "Dell");
+    } else if (text.includes("lenovo") || text.includes("thinkstation") || text.includes("p360")) {
+      selectOptionByPartialText(pcDropdown, "Lenovo");
+    } else if (text.includes("move pro") || text.includes("cart pro")) {
+      selectOptionByPartialText(pcDropdown, "Move Pro");
+    } else if (text.includes("move plus") || text.includes("move+")) {
+      selectOptionByPartialText(pcDropdown, "Move+");
+    } else if (text.includes("hp") || text.includes("zbook")) {
+      selectOptionByPartialText(pcDropdown, "HP");
+    } else if (text.includes("no pc") || text.includes("no computer") || text.includes("without computer")) {
+      selectOptionByPartialText(pcDropdown, "No PC") || selectOptionByPartialText(pcDropdown, "No Computer");
+    }
+
+    // 7. Tips Quantities ("5 boxes of tips", "3 tips", "zero tips")
+    const tipsMatch = text.match(/(\d+|zero|one|two|three|four|five|six|seven|eight|nine|ten)\s+(?:boxes of\s+)?(?:ready\s+)?tips/i);
+    if (tipsMatch) {
+      const numWord = tipsMatch[1].toLowerCase();
+      const wordMap = { zero: 0, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
+      const qty = wordMap[numWord] !== undefined ? wordMap[numWord] : parseInt(numWord);
+      if (!isNaN(qty)) document.getElementById('readyTipsQty').value = qty;
+    }
+
+    // 8. Custom Adjustments ("discount 500", "credit 1000")
+    const discountMatch = text.match(/(?:discount|credit)\s+(?:of\s+)?\$?(\d+)/i);
+    if (discountMatch && discountMatch[1]) {
+      document.getElementById('customDiscount').value = parseInt(discountMatch[1]);
+    }
+
+    // 9. Rep Margins Toggle
+    if (text.includes("show dealer") || text.includes("show margin") || text.includes("dealer on")) {
+      document.getElementById('showDealerMargins').checked = true;
+    } else if (text.includes("hide dealer") || text.includes("hide margin") || text.includes("dealer off")) {
+      document.getElementById('showDealerMargins').checked = false;
+    }
+
+    // 10. Actions
+    if (text.includes("copy summary") || text.includes("copy quote")) {
+      copySummary();
+    } else if (text.includes("print quote") || text.includes("save pdf") || text.includes("print")) {
+      window.print();
+    }
+
+    updateQuote();
+  }
+
+  function selectOptionByPartialText(selectElement, searchStr) {
+    if (!selectElement) return false;
+    for (let i = 0; i < selectElement.options.length; i++) {
+      if (selectElement.options[i].text.toLowerCase().includes(searchStr.toLowerCase())) {
+        selectElement.selectedIndex = i;
+        return true;
+      }
+    }
+    return false;
   }
 
   handleScannerChange();
