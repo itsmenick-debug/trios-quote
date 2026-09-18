@@ -18,6 +18,8 @@
       --green-bg: #c6f6d5;
       --dealer-blue: #2b6cb0;
       --dealer-bg: #ebf8ff;
+      --edu-purple: #553c9a;
+      --edu-bg: #e9d8fd;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -36,7 +38,7 @@
 
     /* Mode Navigation Tabs */
     .tab-bar { grid-column: 1 / -1; display: flex; gap: 10px; background: white; padding: 8px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.04); }
-    .tab-btn { flex: 1; padding: 10px 16px; border: 2px solid transparent; background: #edf2f7; border-radius: 8px; font-weight: 700; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; transition: all 0.2s; text-align: center; }
+    .tab-btn { flex: 1; padding: 10px 14px; border: 2px solid transparent; background: #edf2f7; border-radius: 8px; font-weight: 700; font-size: 0.85rem; color: var(--text-muted); cursor: pointer; transition: all 0.2s; text-align: center; }
     .tab-btn.active { background: white; color: var(--primary); border-color: var(--primary); box-shadow: 0 2px 4px rgba(200, 16, 46, 0.15); }
 
     .section-title { font-size: 0.95rem; font-weight: 700; color: var(--secondary); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 2px solid var(--gray-bg); display: flex; justify-content: space-between; align-items: center; }
@@ -49,6 +51,7 @@
     .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; }
     .badge-promo { background: #feebc8; color: #7b341e; }
     .badge-gov { background: #e2e8f0; color: #2d3748; }
+    .badge-edu { background: var(--edu-bg); color: var(--edu-purple); }
 
     /* Switch styling */
     .switch-container { display: flex; align-items: center; justify-content: space-between; background: var(--dealer-bg); border: 1px solid #bee3f8; padding: 10px 14px; border-radius: 8px; margin-bottom: 12px; }
@@ -142,21 +145,22 @@
 
   <!-- Mode Selector Tabs -->
   <div class="tab-bar">
-    <button class="tab-btn active" id="tabCommercial" onclick="setMode('commercial')">Standard / Promotional Pricing</button>
-    <button class="tab-btn" id="tabGov" onclick="setMode('gov')">🏛️ Government / CHC Pricing</button>
+    <button class="tab-btn active" id="tabCommercial" onclick="setMode('commercial')">Standard / Promotional</button>
+    <button class="tab-btn" id="tabGov" onclick="setMode('gov')">🏛️ Government / CHC</button>
+    <button class="tab-btn" id="tabEdu" onclick="setMode('edu')">🎓 Educational (EDU)</button>
   </div>
 
   <!-- Left: Controls Panel -->
   <div class="card config-panel">
-    <div class="section-title">1. Clinic & Quote Details</div>
+    <div class="section-title">1. Clinic / Institution Details</div>
     <div class="grid-2">
       <div class="form-group">
-        <label>Doctor / Clinic Name</label>
+        <label>Doctor / Contact Name</label>
         <input type="text" id="drName" placeholder="Dr. Jane Smith" value="Dr. Smith" oninput="updateQuote()">
       </div>
       <div class="form-group">
-        <label>Account / Health Center</label>
-        <input type="text" id="practiceName" placeholder="VA Medical / Community Health Center" value="Community Health Center" oninput="updateQuote()">
+        <label>Account / Institution Name</label>
+        <input type="text" id="practiceName" placeholder="Dental School / Residency Clinic" value="University Dental School" oninput="updateQuote()">
       </div>
     </div>
     <div class="grid-2">
@@ -185,7 +189,7 @@
       <div class="form-group">
         <label>Promotion / Trade-Up Program</label>
         <select id="promoSelect" onchange="updateQuote()">
-          <!-- Injected via JS -->
+          <!-- Dynamic -->
         </select>
       </div>
 
@@ -229,6 +233,32 @@
       </div>
     </div>
 
+    <!-- Educational (EDU) Controls -->
+    <div id="eduControls" style="display: none;">
+      <div class="section-title">2. Educational Scanner Selection</div>
+      <div class="form-group">
+        <label>Scanner</label>
+        <select id="eduScannerSelect" onchange="updateQuote()">
+          <option value="EDU_T6">TRIOS 6 — Item #22003203 (MSRP: $22,300 | Wholesale: $15,600)</option>
+          <option value="EDU_T5">TRIOS 5 EDU — Item #22004028 (MSRP: $19,600 | Wholesale: $14,500)</option>
+          <option value="EDU_T3">TRIOS 3 Refresh EDU — Item #22004004 (MSRP: $13,900 | Wholesale: $9,200)</option>
+          <option value="EDU_CORE">TRIOS Core EDU — Item #22004014 (MSRP: $9,900 | Wholesale: $7,000)</option>
+        </select>
+      </div>
+
+      <div class="section-title">3. Educational Computer Option</div>
+      <div class="form-group">
+        <label>Computer</label>
+        <select id="eduPcSelect" onchange="updateQuote()">
+          <option value="EDU_MOVE_PRO">Move Pro — Item #22003210 (MSRP: $8,000 | Wholesale: $6,800)</option>
+          <option value="EDU_DELL_PRO">Dell Pro Max Plus w 3-Year Support — Item #20000255 (MSRP: $4,350 | Wholesale: $4,050)</option>
+          <option value="EDU_MOVE_PLUS">Move+ — Item #22002375 (MSRP: $7,000 | Wholesale: $5,900)</option>
+          <option value="EDU_HP_ZBOOK">HP ZBook G11 (3-Year Warranty) — Item #20000250 (MSRP: $1,850 | Wholesale: $1,700)</option>
+          <option value="NONE">No Computer / Client Existing Hardware ($0)</option>
+        </select>
+      </div>
+    </div>
+
     <div class="section-title">4. Consumables & Margin Adjustment</div>
     <div class="grid-2">
       <div class="form-group">
@@ -257,7 +287,7 @@
       <div>
         <h2 style="color: var(--primary); font-size: 1.25rem;">Trios - What to Quote</h2>
         <div class="quote-client-details" style="margin-top: 3px;">
-          Prepared for: <strong id="outDrName">Dr. Smith</strong> | <span id="outPractice">Community Health Center</span><br>
+          Prepared for: <strong id="outDrName">Dr. Smith</strong> | <span id="outPractice">University Dental School</span><br>
           Date: <span id="outDate"></span> | <span id="outValidity">Valid thru: Sept 30, 2026</span>
         </div>
       </div>
@@ -286,7 +316,7 @@
           <strong id="outItemCodes" style="font-size:0.75rem;">-</strong>
         </div>
         <div>
-          <span>PO Promotion Code:</span>
+          <span>PO Promo Code:</span>
           <strong id="outPoCodeBadge" style="color: #c53030;">-</strong>
         </div>
       </div>
@@ -341,7 +371,7 @@
     <div class="perks-list" id="perksBox">
       <strong>Included with this configuration:</strong>
       <ul id="perksListItems">
-        <!-- Injected via JS -->
+        <!-- Dynamic -->
       </ul>
     </div>
 
@@ -361,15 +391,26 @@
     currentMode = mode;
     document.getElementById('tabCommercial').classList.toggle('active', mode === 'commercial');
     document.getElementById('tabGov').classList.toggle('active', mode === 'gov');
+    document.getElementById('tabEdu').classList.toggle('active', mode === 'edu');
+    
     document.getElementById('commercialControls').style.display = mode === 'commercial' ? 'block' : 'none';
     document.getElementById('govControls').style.display = mode === 'gov' ? 'block' : 'none';
+    document.getElementById('eduControls').style.display = mode === 'edu' ? 'block' : 'none';
     
-    document.getElementById('colPriceHeader').textContent = mode === 'gov' ? 'Gov / CHC Price' : 'Promotional Retail';
-    document.getElementById('outValidity').textContent = mode === 'gov' ? 'Government Contract Schedule 2026' : 'Valid thru: Sept 30, 2026';
+    if (mode === 'gov') {
+      document.getElementById('colPriceHeader').textContent = 'Gov / CHC Price';
+      document.getElementById('outValidity').textContent = 'Government Contract Schedule 2026';
+    } else if (mode === 'edu') {
+      document.getElementById('colPriceHeader').textContent = 'EDU Contract Price';
+      document.getElementById('outValidity').textContent = 'Educational Contract Schedule 2026';
+    } else {
+      document.getElementById('colPriceHeader').textContent = 'Promotional Retail';
+      document.getElementById('outValidity').textContent = 'Valid thru: Sept 30, 2026';
+    }
     updateQuote();
   }
 
-  // Database containing both Commercial and Government / CHC structures
+  // Database containing Commercial, Government / CHC, and Educational (EDU) structures
   const DB = {
     commercial: {
       scanners: {
@@ -566,24 +607,21 @@
           item: "22003200",
           standardMSRP: 28800,
           govMSRP: 26400,
-          cost: 18500,
-          desc: "Government Contract Schedule - General market promo with rebate taken off top"
+          cost: 18500
         },
         GOV_T5: {
           name: "TRIOS 5 Intraoral Scanner",
           item: "22004025",
           standardMSRP: 26700,
           govMSRP: 19200,
-          cost: 13700,
-          desc: "Government Contract Schedule - General market promo with rebate taken off top"
+          cost: 13700
         },
         GOV_T3: {
           name: "TRIOS 3 (Value Promotion)",
           item: "22004000",
           standardMSRP: 18000,
           govMSRP: 10550,
-          cost: 6400,
-          desc: "Government Contract Schedule - Value Promotion"
+          cost: 6400
         }
       },
       computers: {
@@ -630,7 +668,6 @@
           cost: 0
         }
       },
-      // Universal coverage added to every iteration
       coverage: {
         name: "TRIOS Care Corporate – 4 renewals (1st year free)",
         subtext: "Covers full 5 years of comprehensive care, warranty, and support",
@@ -638,6 +675,87 @@
         standardMSRP: 6000,
         govMSRP: 6000,
         cost: 5000
+      }
+    },
+    edu: {
+      scanners: {
+        EDU_T6: {
+          name: "TRIOS 6",
+          item: "22003203",
+          standardMSRP: 28800,
+          eduMSRP: 22300,
+          cost: 15600,
+          desc: "Educational Pricing Reference (Universities & Residency Programs)"
+        },
+        EDU_T5: {
+          name: "TRIOS 5 EDU",
+          item: "22004028",
+          standardMSRP: 26700,
+          eduMSRP: 19600,
+          cost: 14500,
+          desc: "Educational Pricing Reference (Universities & Residency Programs)"
+        },
+        EDU_T3: {
+          name: "TRIOS 3 Refresh EDU",
+          item: "22004004",
+          standardMSRP: 18000,
+          eduMSRP: 13900,
+          cost: 9200,
+          desc: "Educational Pricing Reference (Universities & Residency Programs)"
+        },
+        EDU_CORE: {
+          name: "TRIOS Core EDU",
+          item: "22004014",
+          standardMSRP: 12000,
+          eduMSRP: 9900,
+          cost: 7000,
+          desc: "Educational Pricing Reference (Universities & Residency Programs)"
+        }
+      },
+      computers: {
+        EDU_MOVE_PRO: {
+          name: "Move Pro Cart",
+          item: "22003210",
+          standardMSRP: 8000,
+          eduMSRP: 8000,
+          cost: 6800
+        },
+        EDU_DELL_PRO: {
+          name: "Dell Pro Max Plus with 3-Year Support",
+          item: "20000255",
+          standardMSRP: 4350,
+          eduMSRP: 4350,
+          cost: 4050
+        },
+        EDU_MOVE_PLUS: {
+          name: "Move+ Cart",
+          item: "22002375",
+          standardMSRP: 7000,
+          eduMSRP: 7000,
+          cost: 5900
+        },
+        EDU_HP_ZBOOK: {
+          name: "HP ZBook G11 (3-Year Warranty)",
+          item: "20000250",
+          standardMSRP: 1850,
+          eduMSRP: 1850,
+          cost: 1700
+        },
+        NONE: {
+          name: "No Computer / Client Existing Approved Hardware",
+          item: "-",
+          standardMSRP: 0,
+          eduMSRP: 0,
+          cost: 0
+        }
+      },
+      warranty: {
+        name: "TRIOS Educational 2-Year Extended Warranty",
+        subtext: "Educational extended warranty support coverage",
+        item: "99000101",
+        standardMSRP: 1800,
+        eduMSRP: 1800,
+        cost: 1200
       }
     },
     readyTips: {
@@ -710,7 +828,6 @@
       document.getElementById('outPromoCode').textContent = `PO PROMO CODE: ${promoData.code}`;
       document.getElementById('outPoCodeBadge').textContent = promoData.code;
 
-      // Requirement & Portal Instructions Box
       const tradeBox = document.getElementById('tradeBox');
       if (promoData.actionType === 'preapproval') {
         tradeBox.style.display = 'block';
@@ -732,7 +849,7 @@
       itemCodesList.push(scannerData.item);
       if (pcData.item !== '-') itemCodesList.push(pcData.item);
 
-      // Scanner row
+      // 1. Scanner row
       tbody += `
         <tr>
           <td>
@@ -746,7 +863,7 @@
         </tr>
       `;
 
-      // PC row
+      // 2. Hardware / PC row
       if (pcKey !== 'NONE') {
         tbody += `
           <tr>
@@ -761,7 +878,7 @@
         `;
       }
 
-      // TruAbutment ioConnect Kit
+      // 3. TruAbutment ioConnect Kit
       if (promoData.kitName) {
         totalStandardList += (promoData.kitStandardMSRP || promoData.kitPrice);
         totalSellingPrice += promoData.kitPrice;
@@ -778,7 +895,6 @@
         `;
       }
 
-      // Perks
       document.getElementById('perksBox').style.display = 'block';
       document.getElementById('perksListItems').innerHTML = `
         <li><strong>FREE 2-Hour TRIOS Masterclass:</strong> Personalized virtual training ($500 value, Code: <code>TRIOSQ3FREE</code>).</li>
@@ -788,7 +904,7 @@
 
       document.getElementById('lblNetPrice').textContent = "Doctor Net Investment (After Rebate):";
 
-    } else {
+    } else if (currentMode === 'gov') {
       // GOVERNMENT / CHC PRICING MODE
       const govScannerKey = document.getElementById('govScannerSelect').value;
       const govPcKey = document.getElementById('govPcSelect').value;
@@ -802,7 +918,6 @@
       document.getElementById('outPoCodeBadge').textContent = "GOV/CHC SCHEDULE";
       document.getElementById('tradeBox').style.display = 'none';
 
-      // Line 1: Scanner
       totalStandardList += scannerData.standardMSRP;
       totalSellingPrice += scannerData.govMSRP;
       totalCost += scannerData.cost;
@@ -821,7 +936,6 @@
         </tr>
       `;
 
-      // Line 2: Computer (if selected)
       if (govPcKey !== 'NONE') {
         totalStandardList += pcData.standardMSRP;
         totalSellingPrice += pcData.govMSRP;
@@ -841,7 +955,6 @@
         `;
       }
 
-      // Line 3: Coverage (Gov / VA) - Mandatory on every iteration
       totalStandardList += covData.standardMSRP;
       totalSellingPrice += covData.govMSRP;
       totalCost += covData.cost;
@@ -862,14 +975,95 @@
 
       rebateAmount = 0;
 
-      // Perks update for Gov
       document.getElementById('perksBox').style.display = 'block';
       document.getElementById('perksListItems').innerHTML = `
         <li><strong>Full 5-Year Comprehensive Coverage:</strong> Covers years 1-5 including rapid replacement, warranty, and software support (Item #82242086_Add4).</li>
-        <li><strong>Rebates Applied Upfront:</strong> Discount schedule deducted directly off invoice retail with zero redemption processing required.</li>
+        <li><strong>Rebates Deducted Upfront:</strong> Government pricing structure already reflects promotional rebates taken off the top.</li>
       `;
 
       document.getElementById('lblNetPrice').textContent = "Net Contract Total:";
+
+    } else {
+      // EDUCATIONAL (EDU) PRICING MODE
+      const eduScannerKey = document.getElementById('eduScannerSelect').value;
+      const eduPcKey = document.getElementById('eduPcSelect').value;
+
+      const scannerData = DB.edu.scanners[eduScannerKey];
+      const pcData = DB.edu.computers[eduPcKey];
+      const warrantyData = DB.edu.warranty;
+
+      document.getElementById('outPromoCode').className = "badge badge-edu";
+      document.getElementById('outPromoCode').textContent = `EDU PRICING SCHEDULE`;
+      document.getElementById('outPoCodeBadge').textContent = "EDUCATIONAL CONTRACT";
+      document.getElementById('tradeBox').style.display = 'none';
+
+      // 1. Scanner
+      totalStandardList += scannerData.standardMSRP;
+      totalSellingPrice += scannerData.eduMSRP;
+      totalCost += scannerData.cost;
+      itemCodesList.push(scannerData.item);
+
+      tbody += `
+        <tr>
+          <td>
+            <strong>${scannerData.name}</strong><br>
+            <small style="color:var(--text-muted);">Item #${scannerData.item}</small><br>
+            <small style="color:var(--text-muted); font-style:italic;">${scannerData.desc}</small>
+          </td>
+          ${costCell(scannerData.cost)}
+          <td class="num">${formatMoney(scannerData.standardMSRP)}</td>
+          <td class="num"><strong>${formatMoney(scannerData.eduMSRP)}</strong></td>
+        </tr>
+      `;
+
+      // 2. Computer (if chosen)
+      if (eduPcKey !== 'NONE') {
+        totalStandardList += pcData.standardMSRP;
+        totalSellingPrice += pcData.eduMSRP;
+        totalCost += pcData.cost;
+        itemCodesList.push(pcData.item);
+
+        tbody += `
+          <tr>
+            <td>
+              <strong>${pcData.name}</strong><br>
+              <small style="color:var(--text-muted);">Item #${pcData.item}</small>
+            </td>
+            ${costCell(pcData.cost)}
+            <td class="num">${formatMoney(pcData.standardMSRP)}</td>
+            <td class="num"><strong>${formatMoney(pcData.eduMSRP)}</strong></td>
+          </tr>
+        `;
+      }
+
+      // 3. Extended Warranty (Always appears on EDU quotes)
+      totalStandardList += warrantyData.standardMSRP;
+      totalSellingPrice += warrantyData.eduMSRP;
+      totalCost += warrantyData.cost;
+      itemCodesList.push(warrantyData.item);
+
+      tbody += `
+        <tr>
+          <td>
+            <strong>${warrantyData.name}</strong><br>
+            <small style="color:var(--text-muted);">Item #${warrantyData.item}</small><br>
+            <small style="color:var(--text-muted);">${warrantyData.subtext}</small>
+          </td>
+          ${costCell(warrantyData.cost)}
+          <td class="num">${formatMoney(warrantyData.standardMSRP)}</td>
+          <td class="num"><strong>${formatMoney(warrantyData.eduMSRP)}</strong></td>
+        </tr>
+      `;
+
+      rebateAmount = 0;
+
+      document.getElementById('perksBox').style.display = 'block';
+      document.getElementById('perksListItems').innerHTML = `
+        <li><strong>Educational Pricing Schedule:</strong> Specially discounted academic pricing for dental schools, universities, post-graduate programs, and residency clinics.</li>
+        <li><strong>TRIOS Educational 2-Year Extended Warranty Included:</strong> Full hardware warranty and support continuity (Item #99000101).</li>
+      `;
+
+      document.getElementById('lblNetPrice').textContent = "Total Educational Net Investment:";
     }
 
     // Ready Tips
@@ -909,7 +1103,6 @@
 
     document.getElementById('pricingBody').innerHTML = tbody;
 
-    // Toggle table header & column displays for on-screen view
     const dealerHeaders = document.querySelectorAll('th.dealer-col');
     const dealerCells = document.querySelectorAll('td.dealer-col');
     dealerHeaders.forEach(th => th.style.display = showDealer ? 'table-cell' : 'none');
@@ -922,7 +1115,6 @@
 
     document.getElementById('outStandardSubtotal').textContent = formatMoney(totalStandardList);
     
-    // Upfront Savings Row
     const upfrontRow = document.getElementById('upfrontDiscountRow');
     if (upfrontSavings > 0) {
       upfrontRow.style.display = 'flex';
@@ -966,8 +1158,12 @@
     const net = document.getElementById('outNetPrice').textContent;
     const showDealer = document.getElementById('showDealerMargins').checked;
 
+    let scheduleName = 'Commercial Promotional Pricing';
+    if (currentMode === 'gov') scheduleName = 'Government / CHC Contract Pricing';
+    if (currentMode === 'edu') scheduleName = 'Educational (EDU) Contract Pricing';
+
     let text = `3Shape Trios - What to Quote Summary for ${dr} (${practice})\n`;
-    text += `Schedule: ${currentMode === 'gov' ? 'Government / CHC Contract Pricing' : 'Commercial Promotional Pricing'}\n`;
+    text += `Schedule: ${scheduleName}\n`;
     text += `--------------------------------------------------\n`;
 
     if (currentMode === 'commercial') {
@@ -984,7 +1180,7 @@
       text += `• Invoice Purchase Price: ${invoice}\n`;
       if (rebate) text += `• Mail-In Rebate Check: ${rebate}\n`;
       text += `• Doctor Net Investment: ${net}\n`;
-    } else {
+    } else if (currentMode === 'gov') {
       const govScannerKey = document.getElementById('govScannerSelect').value;
       const scanner = DB.gov.scanners[govScannerKey];
       text += `• Selected System: ${scanner.name} [Item #${scanner.item}]\n`;
@@ -992,6 +1188,14 @@
       text += `• Coverage: TRIOS Care Corporate 5-Year (Item #82242086_Add4) - $6,000 Included\n`;
       text += `• Total Government Invoice: ${invoice}\n`;
       text += `• Contract Net Total: ${net}\n`;
+    } else {
+      const eduScannerKey = document.getElementById('eduScannerSelect').value;
+      const scanner = DB.edu.scanners[eduScannerKey];
+      text += `• Selected System: ${scanner.name} [Item #${scanner.item}]\n`;
+      text += `• Computer / Cart: ${document.getElementById('eduPcSelect').selectedOptions[0].text}\n`;
+      text += `• Extended Warranty: TRIOS Educational 2-Year Extended Warranty (Item #99000101) - $1,800 Included\n`;
+      text += `• Total Educational Invoice: ${invoice}\n`;
+      text += `• Educational Net Investment: ${net}\n`;
     }
 
     if (showDealer) {
