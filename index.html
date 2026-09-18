@@ -193,7 +193,8 @@
       <div class="form-group">
         <label>Hardware Configuration</label>
         <select id="pcSelect" onchange="updateQuote()">
-          <option value="DELL_PRO">Dell Pro Max Plus w/ 3-Yr Support (MSRP: $4,350 | Cost: $4,050)</option>
+          <option value="DELL_PRO">Dell Pro Max Plus w 3-Year Support (Item #20000255 | MSRP: $4,850 | Cost: $4,500)</option>
+          <option value="LENOVO_P360">Lenovo Thinkstation P360 Ultra (Item #20000127 | MSRP: $3,190 | Cost: $2,670)</option>
           <option value="HP_ZBOOK">HP ZBook G11 w/ 3-Yr Warranty (MSRP: $1,850 | Cost: $1,700)</option>
           <option value="MOVE_PLUS">TRIOS MOVE+ Standalone Cart (MSRP: $7,200 | Cost: $6,100)</option>
           <option value="MOVE_PRO">TRIOS MOVE Pro Standalone Cart (MSRP: $8,000 | Cost: $6,800)</option>
@@ -219,7 +220,8 @@
         <label>Computer</label>
         <select id="govPcSelect" onchange="updateQuote()">
           <option value="GOV_MOVE_PRO">Move Pro — Item #22003210 (MSRP: $8,000 | Wholesale: $6,800)</option>
-          <option value="GOV_DELL_PREC">Dell Precision — Item #20000216 (MSRP: $3,500 | Wholesale: $3,250)</option>
+          <option value="GOV_DELL_PRO">Dell Pro Max Plus w 3-Year Support — Item #20000255 (MSRP: $4,850 | Wholesale: $4,500)</option>
+          <option value="GOV_LENOVO_P360">Lenovo Thinkstation P360 Ultra — Item #20000127 (MSRP: $3,190 | Wholesale: $2,670)</option>
           <option value="GOV_MOVE_PLUS">Move+ — Item #22002375 (MSRP: $7,000 | Wholesale: $5,900)</option>
           <option value="GOV_HP_ZBOOK">HP ZBook G11 — Item #20000250 (MSRP: $1,850 | Wholesale: $1,700)</option>
           <option value="NONE">No Computer / Client Existing Hardware ($0)</option>
@@ -549,7 +551,8 @@
         }
       },
       pc: {
-        DELL_PRO: { name: 'Dell Pro Max Plus (3-Yr Support)', item: '20000255', standardMSRP: 4350, promoMSRP: 4350, cost: 4050 },
+        DELL_PRO: { name: 'Dell Pro Max Plus w 3-Year Support', item: '20000255', standardMSRP: 4850, promoMSRP: 4850, cost: 4500 },
+        LENOVO_P360: { name: 'Lenovo Thinkstation P360 Ultra', item: '20000127', standardMSRP: 3190, promoMSRP: 3190, cost: 2670 },
         HP_ZBOOK: { name: 'HP ZBook G11 Laptop (3-Yr Warranty)', item: '20000250', standardMSRP: 1850, promoMSRP: 1850, cost: 1700 },
         MOVE_PLUS: { name: 'TRIOS MOVE+ Standalone Cart', item: '22002375', standardMSRP: 7200, promoMSRP: 7200, cost: 6100 },
         MOVE_PRO: { name: 'TRIOS MOVE Pro Standalone Cart', item: '22003210', standardMSRP: 8000, promoMSRP: 8000, cost: 6800 },
@@ -591,12 +594,19 @@
           govMSRP: 8000,
           cost: 6800
         },
-        GOV_DELL_PREC: {
-          name: "Dell Precision Workstation",
-          item: "20000216",
-          standardMSRP: 3500,
-          govMSRP: 3500,
-          cost: 3250
+        GOV_DELL_PRO: {
+          name: "Dell Pro Max Plus w 3-Year Support",
+          item: "20000255",
+          standardMSRP: 4850,
+          govMSRP: 4850,
+          cost: 4500
+        },
+        GOV_LENOVO_P360: {
+          name: "Lenovo Thinkstation P360 Ultra",
+          item: "20000127",
+          standardMSRP: 3190,
+          govMSRP: 3190,
+          cost: 2670
         },
         GOV_MOVE_PLUS: {
           name: "Move+ Cart",
@@ -850,7 +860,7 @@
         </tr>
       `;
 
-      rebateAmount = 0; // Rebates are taken off top in Government pricing
+      rebateAmount = 0;
 
       // Perks update for Gov
       document.getElementById('perksBox').style.display = 'block';
