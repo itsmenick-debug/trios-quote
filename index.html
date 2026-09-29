@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3Shape TRIOS Q4 Quote Builder v7</title>
+  <title>3Shape TRIOS Q4 Quote Builder v8</title>
   <style>
     :root {
       --primary: #c8102e; /* 3Shape Red */
@@ -154,7 +154,7 @@
     <div class="form-group">
       <label>Scanner Model</label>
       <select id="scannerSelect" onchange="handleScannerChange()">
-        <option value="T6">TRIOS 6 (Standard MSRP: $28,800)</option>
+        <option value="T6" selected>TRIOS 6 (Standard MSRP: $28,800)</option>
         <option value="T5">TRIOS 5 (Standard MSRP: $26,700)</option>
         <option value="T3">TRIOS 3 (Standard MSRP: $18,000)</option>
       </select>
@@ -334,6 +334,8 @@
   
 <script>
   document.getElementById('quoteDate').valueAsDate = new Date();
+  // Ensure default scanner is set to TRIOS 6 on initialization
+  document.getElementById('scannerSelect').value = 'T6';
   let currentTab = 'STANDARD';
   
   const chairsideSoftware = [
