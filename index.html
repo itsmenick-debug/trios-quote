@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3Shape TRIOS Q4 Quote Builder v6</title>
+  <title>3Shape TRIOS Q4 Quote Builder v7</title>
   <style>
     :root {
       --primary: #c8102e; /* 3Shape Red */
@@ -443,6 +443,13 @@
 
   function handleScannerChange() {
     const scannerKey = document.getElementById('scannerSelect').value;
+    
+    // Auto-select HP ZBook for TRIOS 3, otherwise default to Dell Pro Max Plus
+    if (scannerKey === 'T3') {
+      document.getElementById('pcSelect').value = 'HP_ZBOOK';
+    } else {
+      document.getElementById('pcSelect').value = 'DELL_PRO';
+    }
     
     if (currentTab === 'STANDARD') {
       const promoSelect = document.getElementById('promoSelect');
