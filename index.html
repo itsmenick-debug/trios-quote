@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3Shape TRIOS Q4 Quote Builder v8</title>
+  <title>3Shape TRIOS Q4 Quote Builder v9</title>
   <style>
     :root {
       --primary: #c8102e; /* 3Shape Red */
@@ -354,7 +354,8 @@
   const DB = {
     combinables: {
       NONE: { name: "None", codeExt: "", upDiscount: 0, costDiscount: 0, rebateOverride: null },
-      TRADE: { name: "Trade In/Up Program (Replaces standard rebate)", codeExt: "", upDiscount: 0, costDiscount: 0, rebateOverride: { T6: 4500, T5: 3500 } }
+      TRADE: { name: "Trade In/Up Program (Replaces standard rebate)", codeExt: "", upDiscount: 0, costDiscount: 0, rebateOverride: { T6: 4500, T5: 3500 } },
+      DSO_TRADE: { name: "Trade In/Up Program (DSO Special)", codeExt: "", upDiscount: 0, costDiscount: 0, rebateOverride: { T6: 2000, T5: 2000, T3: 2000 } }
     },
     scanners: {
       T6: {
@@ -369,7 +370,7 @@
           CHAIRSIDE_ADDL: { name: "Chairside Bundle (Additional Scanner)", code: "40123/40158", promoMSRP: 24300, cost: 17300, baseRebate: 0, allowedCombos: ["NONE"], software: chairsideSoftware },
           DENTURIST: { name: "Denturist Bundle", code: "40122/40157", promoMSRP: 27400, cost: 18000, baseRebate: 1500, allowedCombos: ["NONE", "TRADE"], software: denturistSoftware },
           DENTURIST_ADDL: { name: "Denturist Bundle (Additional Scanner)", code: "40123/40157", promoMSRP: 24300, cost: 17300, baseRebate: 0, allowedCombos: ["NONE"], software: denturistSoftware },
-          DSO: { name: "DSO Tier 3 (3+ Locations)", code: "40161", promoMSRP: 20150, cost: 15115, baseRebate: 0, allowedCombos: ["NONE", "TRADE"] },
+          DSO: { name: "DSO Tier 3 (3+ Locations)", code: "40161", promoMSRP: 20150, cost: 15115, baseRebate: 0, allowedCombos: ["NONE", "DSO_TRADE"] },
           IOC_AOT: { name: "ioConnect AOT Bundle", code: "40153", promoMSRP: 26900, cost: 17500, baseRebate: 1500, kitName: "TruAbutment ioConnect AOT Kit", kitPrice: 3000, allowedCombos: ["NONE"] },
           IOC_STRAUMANN: { name: "ioConnect Straumann Bundle", code: "40153", promoMSRP: 26900, cost: 17500, baseRebate: 1500, kitName: "TruAbutment ioConnect Straumann Kit", kitPrice: 4000, allowedCombos: ["NONE"] },
           IOC_ADDL_AOT: { name: "ioConnect Addl Scanner AOT", code: "40155", promoMSRP: 23800, cost: 16800, baseRebate: 0, kitName: "TruAbutment ioConnect AOT Kit", kitPrice: 3000, allowedCombos: ["NONE"] },
@@ -729,7 +730,7 @@
     
     if (currentTab === 'STANDARD') {
         text += `• Offer / Promo: ${promoData.name} [PO Code: ${finalCode}]\n`;
-        if (bundleKey === 'TRADE') text += `• Bundle Included: Trade In/Up Program\n`;
+        if (bundleKey === 'TRADE' || bundleKey === 'DSO_TRADE') text += `• Bundle Included: Trade In/Up Program\n`;
     } else {
         text += `• Account Type: ${promoData.name}\n`;
     }
