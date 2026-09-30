@@ -100,9 +100,16 @@
     @media print {
       body { background: white; padding: 0; }
       .app-container { display: block; }
-      .config-panel, header, .btn-group, .switch-container, .dealer-margins-box, .dealer-col, th.dealer-col { display: none !important; }
+      .config-panel, header, .btn-group, .switch-container { display: none !important; }
       .quote-preview { border: none; box-shadow: none; padding: 0; position: static; }
       .card { box-shadow: none; border: none; padding: 0; }
+      
+      /* Hide dealer info on print ONLY if the toggle is off */
+      body:not(.show-dealer-pricing) .dealer-margins-box,
+      body:not(.show-dealer-pricing) .dealer-col,
+      body:not(.show-dealer-pricing) th.dealer-col {
+        display: none !important;
+      }
     }
   </style>
 </head>
@@ -520,6 +527,9 @@
     const readyTipsQty = parseInt(document.getElementById('readyTipsQty').value) || 0;
     const customDiscount = parseFloat(document.getElementById('customDiscount').value) || 0;
     const showDealer = document.getElementById('showDealerMargins').checked;
+
+    // Add this line to pass the toggle state to the CSS
+    document.body.classList.toggle('show-dealer-pricing', showDealer);
   
     const scannerData = DB.scanners[scannerKey];
     
