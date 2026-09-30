@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3Shape TRIOS Q4 Quote Builder v10</title>
+  <title>3Shape TRIOS Q4 Quote Builder v11</title>
   <style>
     :root {
       --primary: #c8102e; /* 3Shape Red */
@@ -690,7 +690,20 @@
     const isDenturist = (currentTab === 'STANDARD' && promoData.name.includes('Denturist'));
     
     document.getElementById('dsoDetails').style.display = isDSO ? 'block' : 'none';
-    document.getElementById('triosCarePerk').style.display = isDSO ? 'none' : 'list-item';
+    
+    // Manage TRIOS Care Perk Text dynamically based on Tab
+    const triosCarePerk = document.getElementById('triosCarePerk');
+    if (isDSO) {
+        triosCarePerk.style.display = 'none';
+    } else {
+        triosCarePerk.style.display = 'list-item';
+        if (currentTab === 'GOV') {
+            triosCarePerk.innerHTML = '<strong>1st Year TRIOS Care Included:</strong> Comprehensive warranty & support';
+        } else {
+            triosCarePerk.innerHTML = '<strong>1st Year TRIOS Care Included:</strong> Comprehensive warranty & support with option to switch to free TRIOS Only plan after Year 1.';
+        }
+    }
+
     document.getElementById('chairsideDetails').style.display = isChairside ? 'block' : 'none';
     document.getElementById('denturistDetails').style.display = isDenturist ? 'block' : 'none';
   
@@ -789,7 +802,11 @@
     text += `+ $1,000 3Shape Lab Credit voucher\n`;
     
     if (!isDSO) {
-      text += `+ 1 Year TRIOS Care Warranty & Support\n`;
+      if (currentTab === 'GOV') {
+        text += `+ 1st Year TRIOS Care Included: Comprehensive warranty & support\n`;
+      } else {
+        text += `+ 1st Year TRIOS Care Included: Comprehensive warranty & support with option to switch to free TRIOS Only plan after Year 1.\n`;
+      }
     }
 
     if (isDSO) {
