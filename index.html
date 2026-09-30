@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>3Shape TRIOS Q4 Quote Builder v9</title>
+  <title>3Shape TRIOS Q4 Quote Builder v10</title>
   <style>
     :root {
       --primary: #c8102e; /* 3Shape Red */
@@ -350,6 +350,10 @@
     { name: "Dental System Removables Training", item: "99005511", msrp: 715, promoMSRP: 715, cost: 550, desc: "Virtual 1:1 Training, 6 hours" }
   ];
 
+  const govSoftware = [
+    { name: "TRIOS Corporate Care (4-Year Extension)", item: "82242086_add4", msrp: 6000, promoMSRP: 6000, cost: 5000, desc: "Extended Warranty & Support for GOV/CHC" }
+  ];
+
   // Pricing Database from 2026 Q4 Confidential Program
   const DB = {
     combinables: {
@@ -376,7 +380,7 @@
           IOC_ADDL_AOT: { name: "ioConnect Addl Scanner AOT", code: "40155", promoMSRP: 23800, cost: 16800, baseRebate: 0, kitName: "TruAbutment ioConnect AOT Kit", kitPrice: 3000, allowedCombos: ["NONE"] },
           IOC_ADDL_STRAUMANN: { name: "ioConnect Addl Scanner Straumann", code: "40155", promoMSRP: 23800, cost: 16800, baseRebate: 0, kitName: "TruAbutment ioConnect Straumann Kit", kitPrice: 4000, allowedCombos: ["NONE"] }
         },
-        gov: { promoMSRP: 28800, cost: 20100 },
+        gov: { promoMSRP: 28800, cost: 20100, software: govSoftware },
         edu: { promoMSRP: 28800, cost: 20100 }
       },
       T5: {
@@ -391,7 +395,7 @@
           IOC_AOT: { name: "ioConnect AOT Bundle", code: "40154", promoMSRP: 19200, cost: 12700, baseRebate: 1000, kitName: "TruAbutment ioConnect AOT Kit", kitPrice: 3000, allowedCombos: ["NONE"] },
           IOC_STRAUMANN: { name: "ioConnect Straumann Bundle", code: "40154", promoMSRP: 19200, cost: 12700, baseRebate: 1000, kitName: "TruAbutment ioConnect Straumann Kit", kitPrice: 4000, allowedCombos: ["NONE"] }
         },
-        gov: { promoMSRP: 21500, cost: 13700 },
+        gov: { promoMSRP: 21500, cost: 13700, software: govSoftware },
         edu: { promoMSRP: 19600, cost: 13700 }
       },
       T3: {
@@ -402,7 +406,7 @@
         promos: {
           VALUE_PROMO: { name: "TRIOS 3 Refresh ($10,550)", code: "40120", promoMSRP: 10550, cost: 6400, baseRebate: 0, allowedCombos: ["NONE"] }
         },
-        gov: { promoMSRP: 18000, cost: 12600 },
+        gov: { promoMSRP: 18000, cost: 12600, software: govSoftware },
         edu: { promoMSRP: 18000, cost: 12600 }
       }
     },
@@ -525,10 +529,23 @@
     if (currentTab === 'STANDARD') {
       promoData = scannerData.promos[promoKey] || Object.values(scannerData.promos)[0];
     } else if (currentTab === 'GOV') {
-      promoData = { name: `TRIOS ${scannerKey.replace('T','')} Government / CHC`, code: `GOV-${scannerKey}`, promoMSRP: scannerData.gov.promoMSRP, cost: scannerData.gov.cost, baseRebate: 0 };
+      promoData = { 
+        name: `TRIOS ${scannerKey.replace('T','')} Government / CHC`, 
+        code: `GOV-${scannerKey}`, 
+        promoMSRP: scannerData.gov.promoMSRP, 
+        cost: scannerData.gov.cost, 
+        baseRebate: 0,
+        software: scannerData.gov.software
+      };
       bundleData = DB.combinables.NONE;
     } else if (currentTab === 'EDU') {
-      promoData = { name: `TRIOS ${scannerKey.replace('T','')} EDU`, code: `EDU-${scannerKey}`, promoMSRP: scannerData.edu.promoMSRP, cost: scannerData.edu.cost, baseRebate: 0 };
+      promoData = { 
+        name: `TRIOS ${scannerKey.replace('T','')} EDU`, 
+        code: `EDU-${scannerKey}`, 
+        promoMSRP: scannerData.edu.promoMSRP, 
+        cost: scannerData.edu.cost, 
+        baseRebate: 0 
+      };
       bundleData = DB.combinables.NONE;
     }
 
@@ -563,7 +580,7 @@
       </tr>
     `;
 
-    // Software lines (if applicable via bundle)
+    // Software/Add-on lines (if applicable via bundle or GOV tab)
     if (promoData.software) {
       promoData.software.forEach(sw => {
         totalList += sw.msrp;
@@ -707,9 +724,16 @@
     if (currentTab === 'STANDARD') {
       promoData = scanner.promos[promoKey] || Object.values(scanner.promos)[0];
     } else if (currentTab === 'GOV') {
-      promoData = { name: `TRIOS ${scannerKey.replace('T','')} Government / CHC`, code: `GOV-${scannerKey}` };
+      promoData = { 
+        name: `TRIOS ${scannerKey.replace('T','')} Government / CHC`, 
+        code: `GOV-${scannerKey}`,
+        software: scanner.gov.software
+      };
     } else if (currentTab === 'EDU') {
-      promoData = { name: `TRIOS ${scannerKey.replace('T','')} EDU`, code: `EDU-${scannerKey}` };
+      promoData = { 
+        name: `TRIOS ${scannerKey.replace('T','')} EDU`, 
+        code: `EDU-${scannerKey}` 
+      };
     }
     
     const finalCode = promoData.code;
@@ -738,7 +762,7 @@
     if (promoData.software) {
       promoData.software.forEach(sw => {
         let descText = sw.desc ? ` - ${sw.desc}` : '';
-        text += `• Software: ${sw.name} [Item #${sw.item}]${descText} - Promo Cost: ${formatMoney(sw.promoMSRP)}\n`;
+        text += `• Add-on: ${sw.name} [Item #${sw.item}]${descText} - Promo Cost: ${formatMoney(sw.promoMSRP)}\n`;
       });
     }
 
