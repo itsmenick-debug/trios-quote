@@ -336,4 +336,473 @@
   ];
 
   const govSoftware = [
-    { name: "TRIOS Corporate Care (4-Year Extension)", item: "82242086_add4", msrp: 6000, promoMSRP: 6000, cost: 5000, desc: "Extended Warranty & Support for GOV/CHC
+    { name: "TRIOS Corporate Care (4-Year Extension)", item: "82242086_add4", msrp: 6000, promoMSRP: 6000, cost: 5000, desc: "Extended Warranty & Support for GOV/CHC" }
+  ];
+
+  const eduSoftware = [
+    { name: "TRIOS Educational 2-Year Extended Warranty", item: "99000101", msrp: 1800, promoMSRP: 1800, cost: 1200, desc: "Extended Warranty & Support for EDU" }
+  ];
+
+  const DB = {
+    combinables: {
+      NONE: { name: "None", codeExt: "", upDiscount: 0, costDiscount: 0, rebateOverride: null },
+      TRADE: { name: "Trade In/Up Program (Replaces standard rebate)", codeExt: "", upDiscount: 0, costDiscount: 0, rebateOverride: { T6: 4500, T5: 3500 } },
+      DSO_TRADE: { name: "Trade In/Up Program (DSO Special)", codeExt: "", upDiscount: 0, costDiscount: 0, rebateOverride: { T6: 2000, T5: 2000, T3: 2000 } }
+    },
+    scanners: {
+      T6: {
+        name: "TRIOS 6 Intraoral Scanner",
+        item: "22003200",
+        listMSRP: 28800,
+        standardCost: 20100,
+        promos: {
+          STANDARD: { name: "Standard Promotion", code: "40122", promoMSRP: 27900, cost: 18500, baseRebate: 1500, allowedCombos: ["NONE", "TRADE"] },
+          ADDITIONAL: { name: "Additional Scanner Promo", code: "40123", promoMSRP: 24800, cost: 17800, baseRebate: 0, allowedCombos: ["NONE"] },
+          CHAIRSIDE: { name: "Chairside Bundle", code: "40122/40158", promoMSRP: 27400, cost: 18000, baseRebate: 1500, allowedCombos: ["NONE", "TRADE"], software: chairsideSoftware },
+          CHAIRSIDE_ADDL: { name: "Chairside Bundle (Additional Scanner)", code: "40123/40158", promoMSRP: 24300, cost: 17300, baseRebate: 0, allowedCombos: ["NONE"], software: chairsideSoftware },
+          DENTURIST: { name: "Denturist Bundle", code: "40122/40157", promoMSRP: 27400, cost: 18000, baseRebate: 1500, allowedCombos: ["NONE", "TRADE"], software: denturistSoftware },
+          DENTURIST_ADDL: { name: "Denturist Bundle (Additional Scanner)", code: "40123/40157", promoMSRP: 24300, cost: 17300, baseRebate: 0, allowedCombos: ["NONE"], software: denturistSoftware },
+          DSO: { name: "DSO Tier 3 (3+ Locations)", code: "40161", promoMSRP: 20150, cost: 15115, baseRebate: 0, allowedCombos: ["NONE", "DSO_TRADE"] },
+          IOC_AOT: { name: "ioConnect AOT Bundle", code: "40153", promoMSRP: 26900, cost: 17500, baseRebate: 1500, kitName: "TruAbutment ioConnect AOT Kit", kitPrice: 3000, allowedCombos: ["NONE"] },
+          IOC_STRAUMANN: { name: "ioConnect Straumann Bundle", code: "40153", promoMSRP: 26900, cost: 17500, baseRebate: 1500, kitName: "TruAbutment ioConnect Straumann Kit", kitPrice: 4000, allowedCombos: ["NONE"] },
+          IOC_ADDL_AOT: { name: "ioConnect Addl Scanner AOT", code: "40155", promoMSRP: 23800, cost: 16800, baseRebate: 0, kitName: "TruAbutment ioConnect AOT Kit", kitPrice: 3000, allowedCombos: ["NONE"] },
+          IOC_ADDL_STRAUMANN: { name: "ioConnect Addl Scanner Straumann", code: "40155", promoMSRP: 23800, cost: 16800, baseRebate: 0, kitName: "TruAbutment ioConnect Straumann Kit", kitPrice: 4000, allowedCombos: ["NONE"] }
+        },
+        gov: { promoMSRP: 26400, cost: 18500, software: govSoftware },
+        edu: { promoMSRP: 28800, cost: 20100, software: eduSoftware }
+      },
+      T5: {
+        name: "TRIOS 5 Intraoral Scanner",
+        item: "22004025",
+        listMSRP: 26700,
+        standardCost: 18700,
+        promos: {
+          STANDARD: { name: "Standard Promotion", code: "40119", promoMSRP: 20200, cost: 13700, baseRebate: 1000, allowedCombos: ["NONE", "TRADE"] },
+          CHAIRSIDE: { name: "Chairside Bundle", code: "40119/40158", promoMSRP: 19700, cost: 13200, baseRebate: 1000, allowedCombos: ["NONE", "TRADE"], software: chairsideSoftware },
+          DENTURIST: { name: "Denturist Bundle", code: "40119/40157", promoMSRP: 19700, cost: 13200, baseRebate: 1000, allowedCombos: ["NONE", "TRADE"], software: denturistSoftware },
+          IOC_AOT: { name: "ioConnect AOT Bundle", code: "40154", promoMSRP: 19200, cost: 12700, baseRebate: 1000, kitName: "TruAbutment ioConnect AOT Kit", kitPrice: 3000, allowedCombos: ["NONE"] },
+          IOC_STRAUMANN: { name: "ioConnect Straumann Bundle", code: "40154", promoMSRP: 19200, cost: 12700, baseRebate: 1000, kitName: "TruAbutment ioConnect Straumann Kit", kitPrice: 4000, allowedCombos: ["NONE"] }
+        },
+        gov: { promoMSRP: 19200, cost: 13700, software: govSoftware },
+        edu: { promoMSRP: 19600, cost: 13700, software: eduSoftware }
+      },
+      T3: {
+        name: "TRIOS 3 Intraoral Scanner",
+        item: "22004000",
+        listMSRP: 18000,
+        standardCost: 12600,
+        promos: {
+          VALUE_PROMO: { name: "TRIOS 3 Refresh ($10,550)", code: "40120", promoMSRP: 10550, cost: 6400, baseRebate: 0, allowedCombos: ["NONE"] }
+        },
+        gov: { promoMSRP: 10550, cost: 6400, software: govSoftware },
+        edu: { promoMSRP: 18000, cost: 12600, software: eduSoftware }
+      }
+    },
+    pc: {
+      DELL_PRO: { name: 'Dell Pro Max Plus (3-Yr Support)', item: '20000255', msrp: 4850, cost: 4500 },
+      DELL_GOV: { name: 'Dell Precision (Gov Pricing)', item: '20000216', msrp: 3500, cost: 3250 },
+      HP_ZBOOK: { name: 'HP ZBook G11 Laptop (3-Yr Warranty)', item: '20000250', msrp: 1850, cost: 1700 },
+      MOVE_PLUS: { name: 'TRIOS MOVE+ Standalone Cart', item: '22002375', msrp: 7200, cost: 6100 },
+      MOVE_PLUS_GOV: { name: 'TRIOS MOVE+ (Gov Pricing)', item: '22002375', msrp: 7000, cost: 5900 },
+      MOVE_PRO: { name: 'TRIOS MOVE Pro Standalone Cart', item: '22003210', msrp: 8000, cost: 6800 },
+      NONE: { name: 'No PC / Client Existing Hardware', item: '-', msrp: 0, cost: 0 }
+    },
+    readyTips: {
+      item: '10036057',
+      promoCode: '40113',
+      regMSRP: 75,
+      promoMSRP: 50,
+      cost: 34
+    }
+  };
+  
+  function setTab(tab) {
+    currentTab = tab;
+    document.getElementById('tabStandard').classList.remove('active');
+    document.getElementById('tabGov').classList.remove('active');
+    document.getElementById('tabEdu').classList.remove('active');
+    
+    if(tab === 'STANDARD') {
+      document.getElementById('tabStandard').classList.add('active');
+      document.getElementById('promoGroup').style.display = 'block';
+      document.getElementById('section2Title').textContent = '2. Target Scanner & Promotion';
+    } else {
+      if(tab === 'GOV') document.getElementById('tabGov').classList.add('active');
+      if(tab === 'EDU') document.getElementById('tabEdu').classList.add('active');
+      
+      document.getElementById('promoGroup').style.display = 'none';
+      document.getElementById('bundleGroup').style.display = 'none';
+      document.getElementById('section2Title').textContent = '2. Target Scanner';
+    }
+    
+    handleScannerChange();
+  }
+
+  function handleScannerChange() {
+    const scannerKey = document.getElementById('scannerSelect').value;
+    
+    if (scannerKey === 'T3') {
+      document.getElementById('pcSelect').value = 'HP_ZBOOK';
+    } else {
+      document.getElementById('pcSelect').value = 'DELL_PRO';
+    }
+    
+    if (currentTab === 'STANDARD') {
+      const promoSelect = document.getElementById('promoSelect');
+      promoSelect.innerHTML = '';
+      const scanner = DB.scanners[scannerKey];
+      
+      for (const [key, p] of Object.entries(scanner.promos)) {
+        const opt = document.createElement('option');
+        opt.value = key;
+        opt.textContent = p.baseRebate > 0 ? `${p.name} ($${p.baseRebate.toLocaleString()} Rebate) [Code: ${p.code}]` : `${p.name} [Code: ${p.code}]`;
+        promoSelect.appendChild(opt);
+      }
+      handlePromoChange();
+    } else {
+      updateQuote();
+    }
+  }
+
+  function handlePromoChange() {
+    if (currentTab !== 'STANDARD') return;
+    
+    const scannerKey = document.getElementById('scannerSelect').value;
+    const promoKey = document.getElementById('promoSelect').value;
+    const bundleSelect = document.getElementById('bundleSelect');
+    const bundleGroup = document.getElementById('bundleGroup');
+    bundleSelect.innerHTML = '';
+
+    const scanner = DB.scanners[scannerKey];
+    const promoData = scanner.promos[promoKey];
+
+    if (promoData.allowedCombos.length <= 1 && promoData.allowedCombos.includes("NONE")) {
+      bundleGroup.style.display = 'none';
+    } else {
+      bundleGroup.style.display = 'block';
+    }
+
+    promoData.allowedCombos.forEach(comboKey => {
+      const b = DB.combinables[comboKey];
+      const opt = document.createElement('option');
+      opt.value = comboKey;
+      opt.textContent = b.name;
+      bundleSelect.appendChild(opt);
+    });
+
+    updateQuote();
+  }
+  
+  function formatMoney(num) {
+    return '$' + Number(num).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+  
+  function updateQuote() {
+    const drName = document.getElementById('drName').value || 'Doctor';
+    const practice = document.getElementById('practiceName').value || '';
+    const quoteDate = document.getElementById('quoteDate').value;
+    const scannerKey = document.getElementById('scannerSelect').value;
+    const promoKey = document.getElementById('promoSelect').value;
+    const bundleKey = document.getElementById('bundleSelect').value || 'NONE';
+    const pcKey = document.getElementById('pcSelect').value;
+    const readyTipsQty = parseInt(document.getElementById('readyTipsQty').value) || 0;
+    const customDiscount = parseFloat(document.getElementById('customDiscount').value) || 0;
+    const showDealer = document.getElementById('showDealerMargins').checked;
+
+    document.body.classList.toggle('show-dealer-pricing', showDealer);
+  
+    const scannerData = DB.scanners[scannerKey];
+    
+    let promoData;
+    let bundleData = DB.combinables[bundleKey] || DB.combinables.NONE;
+
+    if (currentTab === 'STANDARD') {
+      promoData = scannerData.promos[promoKey] || Object.values(scannerData.promos)[0];
+    } else if (currentTab === 'GOV') {
+      promoData = { 
+        name: `TRIOS ${scannerKey.replace('T','')} Government / CHC`, 
+        code: `GOV-${scannerKey}`, 
+        promoMSRP: scannerData.gov.promoMSRP, 
+        cost: scannerData.gov.cost, 
+        baseRebate: 0,
+        software: scannerData.gov.software
+      };
+      bundleData = DB.combinables.NONE;
+    } else if (currentTab === 'EDU') {
+      promoData = { 
+        name: `TRIOS ${scannerKey.replace('T','')} EDU`, 
+        code: `EDU-${scannerKey}`, 
+        promoMSRP: scannerData.edu.promoMSRP, 
+        cost: scannerData.edu.cost, 
+        baseRebate: 0,
+        software: scannerData.edu.software
+      };
+      bundleData = DB.combinables.NONE;
+    }
+
+    const pcData = DB.pc[pcKey];
+  
+    document.getElementById('outDrName').textContent = drName;
+    document.getElementById('outPractice').textContent = practice;
+    document.getElementById('outDate').textContent = quoteDate ? new Date(quoteDate).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}) : '';
+  
+    let finalCode = promoData.code;
+    document.getElementById('outPromoCode').textContent = currentTab === 'STANDARD' ? `PO PROMO CODE: ${finalCode}` : `ACCT TYPE: ${finalCode}`;
+    document.getElementById('outPoCodeBadge').textContent = finalCode;
+  
+    let tbody = '';
+    let totalList = scannerData.listMSRP + pcData.msrp;
+    let invoiceTotal = promoData.promoMSRP + pcData.msrp - customDiscount;
+    let totalCost = promoData.cost + pcData.cost;
+    let itemCodesList = [scannerData.item];
+    if (pcData.item !== '-') itemCodesList.push(pcData.item);
+  
+    const costCell = (costVal) => showDealer ? `<td class="num dealer-col">${formatMoney(costVal)}</td>` : '';
+  
+    tbody += `
+      <tr>
+        <td><strong>${scannerData.name}</strong><br><small style="color:var(--text-muted);">${promoData.name} (Item #${scannerData.item})</small></td>
+        ${costCell(promoData.cost)}
+        <td class="num">${formatMoney(scannerData.listMSRP)}</td>
+        <td class="num"><strong>${formatMoney(promoData.promoMSRP)}</strong></td>
+      </tr>
+    `;
+
+    if (promoData.software) {
+      promoData.software.forEach(sw => {
+        totalList += sw.msrp;
+        invoiceTotal += sw.promoMSRP;
+        totalCost += sw.cost;
+        itemCodesList.push(sw.item);
+
+        let descText = sw.desc ? `${sw.desc} (Item #${sw.item})` : `Workflow Bundle Component (Item #${sw.item})`;
+
+        tbody += `
+          <tr>
+            <td><strong>${sw.name}</strong><br><small style="color:var(--text-muted);">${descText}</small></td>
+            ${costCell(sw.cost)}
+            <td class="num">${formatMoney(sw.msrp)}</td>
+            <td class="num"><strong>${formatMoney(sw.promoMSRP)}</strong></td>
+          </tr>
+        `;
+      });
+    }
+  
+    if (pcKey !== 'NONE') {
+      tbody += `
+        <tr>
+          <td><strong>${pcData.name}</strong><br><small style="color:var(--text-muted);">Item #${pcData.item}</small></td>
+          ${costCell(pcData.cost)}
+          <td class="num">${formatMoney(pcData.msrp)}</td>
+          <td class="num"><strong>${formatMoney(pcData.msrp)}</strong></td>
+        </tr>
+      `;
+    }
+  
+    if (promoData.kitName) {
+      totalList += promoData.kitPrice;
+      invoiceTotal += promoData.kitPrice;
+      tbody += `
+        <tr>
+          <td><strong>${promoData.kitName}</strong><br><small style="color:var(--text-muted);">Workflow Bundle Component</small></td>
+          ${costCell(promoData.kitCost || 0)}
+          <td class="num">${formatMoney(promoData.kitPrice)}</td>
+          <td class="num"><strong>${formatMoney(promoData.kitPrice)}</strong></td>
+        </tr>
+      `;
+    }
+  
+    if (readyTipsQty > 0) {
+      const tipsList = readyTipsQty * DB.readyTips.regMSRP;
+      const tipsPromo = readyTipsQty * DB.readyTips.promoMSRP;
+      const tipsCost = readyTipsQty * DB.readyTips.cost;
+      totalList += tipsList;
+      invoiceTotal += tipsPromo;
+      totalCost += tipsCost;
+      itemCodesList.push(`${DB.readyTips.item} (x${readyTipsQty})`);
+  
+      tbody += `
+        <tr>
+          <td><strong>TRIOS Ready Tips (${readyTipsQty} boxes)</strong><br><small style="color:var(--text-muted);">Promo Code 40113 (Item #${DB.readyTips.item})</small></td>
+          ${costCell(tipsCost)}
+          <td class="num">${formatMoney(tipsList)}</td>
+          <td class="num"><strong>${formatMoney(tipsPromo)}</strong></td>
+        </tr>
+      `;
+    }
+  
+    if (customDiscount > 0) {
+      tbody += `
+        <tr>
+          <td><strong style="color: #c53030;">Dealer Additional Adjustment</strong></td>
+          ${showDealer ? `<td class="num dealer-col">-</td>` : ''}
+          <td class="num">-</td>
+          <td class="num" style="color: #c53030;"><strong>-${formatMoney(customDiscount)}</strong></td>
+        </tr>
+      `;
+    }
+  
+    document.getElementById('pricingBody').innerHTML = tbody;
+  
+    const dealerHeaders = document.querySelectorAll('th.dealer-col');
+    dealerHeaders.forEach(th => th.style.display = showDealer ? 'table-cell' : 'none');
+  
+    const upfrontSavings = totalList - invoiceTotal;
+    const rebateAmount = bundleData.rebateOverride ? bundleData.rebateOverride[scannerKey] : promoData.baseRebate;
+    const netInvestment = invoiceTotal - rebateAmount;
+  
+    document.getElementById('outSubtotal').textContent = formatMoney(totalList);
+    document.getElementById('outUpfrontSavings').textContent = `-${formatMoney(upfrontSavings)}`;
+    document.getElementById('outInvoiceTotal').textContent = formatMoney(invoiceTotal);
+  
+    const rebateRow = document.getElementById('rebateRow');
+    if (rebateAmount > 0) {
+      rebateRow.style.display = 'flex';
+      document.getElementById('outRebate').textContent = `-${formatMoney(rebateAmount)}`;
+    } else {
+      rebateRow.style.display = 'none';
+    }
+  
+    document.getElementById('outNetPrice').textContent = formatMoney(netInvestment);
+
+    const isDSO = (currentTab === 'STANDARD' && promoKey === 'DSO');
+    const isChairside = (currentTab === 'STANDARD' && promoData.name.includes('Chairside'));
+    const isDenturist = (currentTab === 'STANDARD' && promoData.name.includes('Denturist'));
+    
+    document.getElementById('dsoDetails').style.display = isDSO ? 'block' : 'none';
+    
+    const triosCarePerk = document.getElementById('triosCarePerk');
+    if (isDSO) {
+        triosCarePerk.style.display = 'none';
+    } else {
+        triosCarePerk.style.display = 'list-item';
+        if (currentTab === 'GOV') {
+            triosCarePerk.innerHTML = '<strong>1st Year TRIOS Care Included:</strong> Comprehensive warranty & support';
+        } else {
+            triosCarePerk.innerHTML = '<strong>1st Year TRIOS Care Included:</strong> Comprehensive warranty & support with option to switch to free TRIOS Only plan after Year 1.';
+        }
+    }
+
+    document.getElementById('chairsideDetails').style.display = isChairside ? 'block' : 'none';
+    document.getElementById('denturistDetails').style.display = isDenturist ? 'block' : 'none';
+  
+    const dealerBox = document.getElementById('dealerBox');
+    if (showDealer) {
+      dealerBox.style.display = 'block';
+      const grossProfit = invoiceTotal - totalCost;
+      const marginPct = invoiceTotal > 0 ? ((grossProfit / invoiceTotal) * 100).toFixed(1) : 0;
+  
+      document.getElementById('outResellerCost').textContent = formatMoney(totalCost);
+      document.getElementById('outGrossProfit').textContent = `${formatMoney(grossProfit)} (${marginPct}%)`;
+      document.getElementById('dealerMarginPct').textContent = `Gross Margin: ${marginPct}%`;
+      document.getElementById('outItemCodes').textContent = itemCodesList.join(', ');
+    } else {
+      dealerBox.style.display = 'none';
+    }
+  }
+  
+  function copySummary() {
+    const dr = document.getElementById('drName').value || 'Doctor';
+    const practice = document.getElementById('practiceName').value;
+    const scannerKey = document.getElementById('scannerSelect').value;
+    const promoKey = document.getElementById('promoSelect').value;
+    const bundleKey = document.getElementById('bundleSelect').value || 'NONE';
+    const bundleData = DB.combinables[bundleKey] || DB.combinables.NONE;
+    
+    const scanner = DB.scanners[scannerKey];
+    
+    let promoData;
+    if (currentTab === 'STANDARD') {
+      promoData = scanner.promos[promoKey] || Object.values(scanner.promos)[0];
+    } else if (currentTab === 'GOV') {
+      promoData = { 
+        name: `TRIOS ${scannerKey.replace('T','')} Government / CHC`, 
+        code: `GOV-${scannerKey}`,
+        software: scanner.gov.software
+      };
+    } else if (currentTab === 'EDU') {
+      promoData = { 
+        name: `TRIOS ${scannerKey.replace('T','')} EDU`, 
+        code: `EDU-${scannerKey}`,
+        software: scanner.edu.software
+      };
+    }
+    
+    const finalCode = promoData.code;
+    const isDSO = (currentTab === 'STANDARD' && promoKey === 'DSO');
+    const isChairside = (currentTab === 'STANDARD' && promoData.name.includes('Chairside'));
+    const isDenturist = (currentTab === 'STANDARD' && promoData.name.includes('Denturist'));
+
+    const invoice = document.getElementById('outInvoiceTotal').textContent;
+    const rebate = (bundleData.rebateOverride ? bundleData.rebateOverride[scannerKey] : promoData.baseRebate) > 0 
+      ? formatMoney(bundleData.rebateOverride ? bundleData.rebateOverride[scannerKey] : promoData.baseRebate) 
+      : null;
+    const net = document.getElementById('outNetPrice').textContent;
+    const showDealer = document.getElementById('showDealerMargins').checked;
+  
+    let text = `3Shape TRIOS Quote Summary for ${dr} (${practice})\n`;
+    text += `--------------------------------------------------\n`;
+    text += `• System: ${scanner.name} [Item #${scanner.item}]\n`;
+    
+    if (currentTab === 'STANDARD') {
+        text += `• Offer / Promo: ${promoData.name} [PO Code: ${finalCode}]\n`;
+        if (bundleKey === 'TRADE' || bundleKey === 'DSO_TRADE') text += `• Bundle Included: Trade In/Up Program\n`;
+    } else {
+        text += `• Account Type: ${promoData.name}\n`;
+    }
+    
+    if (promoData.software) {
+      promoData.software.forEach(sw => {
+        let descText = sw.desc ? ` - ${sw.desc}` : '';
+        text += `• Add-on: ${sw.name} [Item #${sw.item}]${descText} - Promo Cost: ${formatMoney(sw.promoMSRP)}\n`;
+      });
+    }
+
+    if (promoData.kitName) text += `• Kit: ${promoData.kitName} (${formatMoney(promoData.kitPrice)})\n`;
+    text += `• PC/Hardware: ${document.getElementById('pcSelect').selectedOptions[0].text}\n`;
+    text += `• Invoice Total: ${invoice}\n`;
+    if (rebate) text += `• Mail-In Rebate: ${rebate}\n`;
+    text += `• Net Doctor Price: ${net}\n`;
+  
+    if (showDealer) {
+      text += `\n[INTERNAL DEALER DETAILS]\n`;
+      text += `• Reseller PO Cost: ${document.getElementById('outResellerCost').textContent}\n`;
+      text += `• Dealer Gross Profit: ${document.getElementById('outGrossProfit').textContent}\n`;
+    }
+  
+    text += `\nIncluded Perks:\n`;
+    if (isChairside) {
+      text += `+ Chairside Bundle: Discounts on Asiga/Formlabs Printers & $300 in Design Credits included\n`;
+    }
+    if (isDenturist) {
+      text += `+ Denturist Bundle: $300 in Design Credits included\n`;
+    }
+    text += `+ Free 2-Hour TRIOS Masterclass Onboarding ($500 Value, Code: TRIOSQ4FREE)\n`;
+    text += `+ $1,000 3Shape Lab Credit voucher\n`;
+    
+    if (!isDSO) {
+      if (currentTab === 'GOV') {
+        text += `+ 1st Year TRIOS Care Included: Comprehensive warranty & support\n`;
+      } else {
+        text += `+ 1st Year TRIOS Care Included: Comprehensive warranty & support with option to switch to free TRIOS Only plan after Year 1.\n`;
+      }
+    }
+
+    if (isDSO) {
+      text += `\n[DSO MULTI-LOCATION NOTES]\n`;
+      text += `* Participating multi-location practices qualify for TRIOS Corporate Care. After the first year you may choose to stay on TRIOS Corporate Care ($1,850/year) or opt for the TRIOS Only plan at no cost.\n`;
+      text += `* Reseller must provide: Multi Location Practice Name, Multi Location Website, Multi Location HQ Address, Multi Location Point of Contact email, Centralized or Decentralized for subscription payments\n`;
+    }
+
+    text += `\nOffer valid through December 31, 2026.`;
+  
+    navigator.clipboard.writeText(text).then(() => {
+      alert("Quote summary copied to clipboard!");
+    });
+  }
+  
+  setTab('STANDARD');
+</script>
+  
+</body>
+</html>
