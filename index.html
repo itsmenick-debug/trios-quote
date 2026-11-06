@@ -281,10 +281,11 @@
   
     <!-- Black Friday Details Box -->
     <div id="bfDetails" style="display:none;" class="perks-list">
-      <strong style="color:var(--primary);">Black Friday Promotion Requirements:</strong>
+      <strong style="color:var(--primary);">Black Friday Promotion Notes:</strong>
       <ul>
-        <li><strong>End-User Rebate:</strong> Must submit rebate form within 30 days of purchase via <a href="https://pages.3shape.com/NA-BLack-Friday-2026.html" target="_blank">Black Friday 2026 Portal</a>.</li>
-        <li><strong>Requirements:</strong> Scanner must be sold within 5% of the promotional MSRP to qualify for the rebate.</li>
+        <li id="bfT6Rebate"><strong>End-User Rebate:</strong> Must submit rebate form within 30 days of purchase via <a href="https://pages.3shape.com/NA-BLack-Friday-2026.html" target="_blank">Black Friday 2026 Portal</a>.</li>
+        <li id="bfT6Rule"><strong>Requirements:</strong> Scanner must be sold within 5% of the promotional MSRP to qualify for the rebate.</li>
+        <li id="bfT3Rule"><strong>Included Hardware:</strong> HP ZBook is included at no additional cost.</li>
       </ul>
     </div>
 
@@ -404,7 +405,7 @@
         promos: {
           VALUE_PROMO: { name: "TRIOS 3 Refresh ($10,550)", code: "40120", promoMSRP: 10550, cost: 6400, baseRebate: 0, allowedCombos: ["NONE"] },
           BLACK_FRIDAY: { name: "Black Friday Promo (Free ZBook)", code: "40164", promoMSRP: 10550, cost: 6400, baseRebate: 0, allowedCombos: ["NONE"], software: [
-            { name: "HP ZBook G11 Laptop (Black Friday)", item: "20000250", msrp: 1850, promoMSRP: 0, cost: 0, desc: "Included at NO COST under promo 40164" }
+            { name: "HP ZBook G11 Laptop", item: "20000250", msrp: 1850, promoMSRP: 0, cost: 0, desc: "Included at NO COST under promo 40164" }
           ]}
         },
         gov: { promoMSRP: 10550, cost: 6400, software: govSoftware },
@@ -688,7 +689,14 @@
     const isChairside = (currentTab === 'STANDARD' && promoData.name.includes('Chairside'));
     const isDenturist = (currentTab === 'STANDARD' && promoData.name.includes('Denturist'));
     
+    // Manage dynamic Black Friday details display
     document.getElementById('bfDetails').style.display = isBF ? 'block' : 'none';
+    if (isBF) {
+        document.getElementById('bfT6Rebate').style.display = (scannerKey === 'T6') ? 'list-item' : 'none';
+        document.getElementById('bfT6Rule').style.display = (scannerKey === 'T6') ? 'list-item' : 'none';
+        document.getElementById('bfT3Rule').style.display = (scannerKey === 'T3') ? 'list-item' : 'none';
+    }
+
     document.getElementById('dsoDetails').style.display = isDSO ? 'block' : 'none';
     
     const triosCarePerk = document.getElementById('triosCarePerk');
@@ -793,9 +801,13 @@
 
     if (isBF) {
       text += `\n[BLACK FRIDAY PROMO NOTES]\n`;
-      text += `* End-User Rebate: Must submit rebate form within 30 days of purchase.\n`;
-      text += `* Rebate Link: https://pages.3shape.com/NA-BLack-Friday-2026.html\n`;
-      text += `* Requirement: Scanner must be sold within 5% of the promotional MSRP to qualify for rebate.\n`;
+      if (scannerKey === 'T6') {
+          text += `* End-User Rebate: Must submit rebate form within 30 days of purchase.\n`;
+          text += `* Rebate Link: https://pages.3shape.com/NA-BLack-Friday-2026.html\n`;
+          text += `* Requirement: Scanner must be sold within 5% of the promotional MSRP to qualify for rebate.\n`;
+      } else if (scannerKey === 'T3') {
+          text += `* Included Hardware: HP ZBook is included at no additional cost.\n`;
+      }
     }
   
     text += `\nIncluded Perks:\n`;
