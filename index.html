@@ -279,6 +279,15 @@
       </div>
     </div>
   
+    <!-- Black Friday Details Box -->
+    <div id="bfDetails" style="display:none;" class="perks-list">
+      <strong style="color:var(--primary);">Black Friday Promotion Requirements:</strong>
+      <ul>
+        <li><strong>End-User Rebate:</strong> Must submit rebate form within 30 days of purchase via <a href="https://pages.3shape.com/NA-BLack-Friday-2026.html" target="_blank">Black Friday 2026 Portal</a>.</li>
+        <li><strong>Requirements:</strong> Scanner must be sold within 5% of the promotional MSRP to qualify for the rebate.</li>
+      </ul>
+    </div>
+
     <div id="dsoDetails" style="display:none;" class="perks-list dso-list">
       <strong style="color:var(--primary);">DSO / Multi-Location Requirements & Notes:</strong>
       <ul>
@@ -357,6 +366,7 @@
         standardCost: 20100,
         promos: {
           STANDARD: { name: "Standard Promotion", code: "40122", promoMSRP: 27900, cost: 18500, baseRebate: 1500, allowedCombos: ["NONE", "TRADE"] },
+          BLACK_FRIDAY: { name: "Black Friday Promo (w/ $2,755 Rebate)", code: "40122", promoMSRP: 27900, cost: 18500, baseRebate: 2755, allowedCombos: ["NONE"] },
           ADDITIONAL: { name: "Additional Scanner Promo", code: "40123", promoMSRP: 24800, cost: 17800, baseRebate: 0, allowedCombos: ["NONE"] },
           CHAIRSIDE: { name: "Chairside Bundle", code: "40122/40158", promoMSRP: 27400, cost: 18000, baseRebate: 1500, allowedCombos: ["NONE", "TRADE"], software: chairsideSoftware },
           CHAIRSIDE_ADDL: { name: "Chairside Bundle (Additional Scanner)", code: "40123/40158", promoMSRP: 24300, cost: 17300, baseRebate: 0, allowedCombos: ["NONE"], software: chairsideSoftware },
@@ -392,7 +402,10 @@
         listMSRP: 18000,
         standardCost: 12600,
         promos: {
-          VALUE_PROMO: { name: "TRIOS 3 Refresh ($10,550)", code: "40120", promoMSRP: 10550, cost: 6400, baseRebate: 0, allowedCombos: ["NONE"] }
+          VALUE_PROMO: { name: "TRIOS 3 Refresh ($10,550)", code: "40120", promoMSRP: 10550, cost: 6400, baseRebate: 0, allowedCombos: ["NONE"] },
+          BLACK_FRIDAY: { name: "Black Friday Promo (Free ZBook)", code: "40164", promoMSRP: 10550, cost: 6400, baseRebate: 0, allowedCombos: ["NONE"], software: [
+            { name: "HP ZBook G11 Laptop (Black Friday)", item: "20000250", msrp: 1850, promoMSRP: 0, cost: 0, desc: "Included at NO COST under promo 40164" }
+          ]}
         },
         gov: { promoMSRP: 10550, cost: 6400, software: govSoftware },
         edu: { promoMSRP: 18000, cost: 12600, software: eduSoftware }
@@ -472,6 +485,11 @@
     const bundleSelect = document.getElementById('bundleSelect');
     const bundleGroup = document.getElementById('bundleGroup');
     bundleSelect.innerHTML = '';
+
+    // Auto-clear PC if Black Friday T3 is chosen (prevent duplicate PC charge)
+    if (promoKey === 'BLACK_FRIDAY' && scannerKey === 'T3') {
+      document.getElementById('pcSelect').value = 'NONE';
+    }
 
     const scanner = DB.scanners[scannerKey];
     const promoData = scanner.promos[promoKey];
@@ -665,10 +683,12 @@
   
     document.getElementById('outNetPrice').textContent = formatMoney(netInvestment);
 
+    const isBF = (currentTab === 'STANDARD' && promoKey === 'BLACK_FRIDAY');
     const isDSO = (currentTab === 'STANDARD' && promoKey === 'DSO');
     const isChairside = (currentTab === 'STANDARD' && promoData.name.includes('Chairside'));
     const isDenturist = (currentTab === 'STANDARD' && promoData.name.includes('Denturist'));
     
+    document.getElementById('bfDetails').style.display = isBF ? 'block' : 'none';
     document.getElementById('dsoDetails').style.display = isDSO ? 'block' : 'none';
     
     const triosCarePerk = document.getElementById('triosCarePerk');
@@ -729,6 +749,7 @@
     }
     
     const finalCode = promoData.code;
+    const isBF = (currentTab === 'STANDARD' && promoKey === 'BLACK_FRIDAY');
     const isDSO = (currentTab === 'STANDARD' && promoKey === 'DSO');
     const isChairside = (currentTab === 'STANDARD' && promoData.name.includes('Chairside'));
     const isDenturist = (currentTab === 'STANDARD' && promoData.name.includes('Denturist'));
@@ -768,6 +789,13 @@
       text += `\n[INTERNAL DEALER DETAILS]\n`;
       text += `• Reseller PO Cost: ${document.getElementById('outResellerCost').textContent}\n`;
       text += `• Dealer Gross Profit: ${document.getElementById('outGrossProfit').textContent}\n`;
+    }
+
+    if (isBF) {
+      text += `\n[BLACK FRIDAY PROMO NOTES]\n`;
+      text += `* End-User Rebate: Must submit rebate form within 30 days of purchase.\n`;
+      text += `* Rebate Link: https://pages.3shape.com/NA-BLack-Friday-2026.html\n`;
+      text += `* Requirement: Scanner must be sold within 5% of the promotional MSRP to qualify for rebate.\n`;
     }
   
     text += `\nIncluded Perks:\n`;
