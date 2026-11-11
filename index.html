@@ -688,6 +688,7 @@
     const isChairside = (currentTab === 'STANDARD' && promoData.name.includes('Chairside'));
     const isDenturist = (currentTab === 'STANDARD' && promoData.name.includes('Denturist'));
     
+    // Manage dynamic Black Friday details display
     document.getElementById('bfDetails').style.display = isBF ? 'block' : 'none';
     if (isBF) {
         document.getElementById('bfT6Rebate').style.display = (scannerKey === 'T6') ? 'list-item' : 'none';
@@ -840,14 +841,17 @@
   }
 
   function printQuote() {
-    window.focus();
-    if (navigator.userAgent.match(/iphone|ipod|ipad/i)) {
-      setTimeout(function() {
-        window.print();
-      }, 400);
-    } else {
-      window.print();
+    // Detect iOS devices (iPhone, iPad, iPod)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
+    if (isIOS) {
+      alert("iPhone/iPad Note:\n\nIf the print menu doesn't open automatically, your current app is blocking it.\n\nTo save as a PDF, tap the iOS 'Share' icon (the square with an up arrow), select 'Print', then pinch outward on the preview image to save it!");
     }
+    
+    window.focus();
+    setTimeout(function() {
+      window.print();
+    }, 250);
   }
   
   setTab('STANDARD');
