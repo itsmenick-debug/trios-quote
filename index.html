@@ -323,7 +323,7 @@
   
     <div class="btn-group">
       <button class="btn btn-outline" onclick="copySummary()">📋 Copy Summary</button>
-      <button class="btn btn-primary" onclick="window.print()">🖨️ Print / Save PDF</button>
+      <button class="btn btn-primary" onclick="printQuote()">🖨️ Print / Save PDF</button>
     </div>
   </div>
 </div>
@@ -487,7 +487,6 @@
     const bundleGroup = document.getElementById('bundleGroup');
     bundleSelect.innerHTML = '';
 
-    // Auto-clear PC if Black Friday T3 is chosen (prevent duplicate PC charge)
     if (promoKey === 'BLACK_FRIDAY' && scannerKey === 'T3') {
       document.getElementById('pcSelect').value = 'NONE';
     }
@@ -689,7 +688,6 @@
     const isChairside = (currentTab === 'STANDARD' && promoData.name.includes('Chairside'));
     const isDenturist = (currentTab === 'STANDARD' && promoData.name.includes('Denturist'));
     
-    // Manage dynamic Black Friday details display
     document.getElementById('bfDetails').style.display = isBF ? 'block' : 'none';
     if (isBF) {
         document.getElementById('bfT6Rebate').style.display = (scannerKey === 'T6') ? 'list-item' : 'none';
@@ -839,6 +837,17 @@
     navigator.clipboard.writeText(text).then(() => {
       alert("Quote summary copied to clipboard!");
     });
+  }
+
+  function printQuote() {
+    window.focus();
+    if (navigator.userAgent.match(/iphone|ipod|ipad/i)) {
+      setTimeout(function() {
+        window.print();
+      }, 400);
+    } else {
+      window.print();
+    }
   }
   
   setTab('STANDARD');
